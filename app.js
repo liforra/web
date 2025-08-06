@@ -54,6 +54,7 @@ app.get('/banners', (req, res) => {
 
 app.use("/fonts", express.static("fonts"));
 app.use("/banners", express.static("88x31"));
+app.use("/old", express.static("old-website"));
 
 // -- Files
 app.get('/theme.css', (req, res) => {
