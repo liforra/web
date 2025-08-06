@@ -49,6 +49,10 @@ app.get('/projects', (req, res) => {
 app.get('/banners', (req, res) => {
 	res.end(site("banners"));
 });
+app.get('/keyfile', (req, res) => {
+	res.end(readfile("/old-website/keyfile"));
+});
+
 
 
 
