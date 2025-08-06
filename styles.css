@@ -86,13 +86,21 @@ html, body {
   gap: 0rem;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
-.color-1 {
+.online {
   /*background-color:rgb(177, 187, 30);*/
-  background-color:pink;
+  background-color:rgb(10, 62, 40);
+  color: rgb(185, 66, 218);
 }
 
+.offline {
+  /*background-color:rgb(177, 187, 30);*/
+  background-color:rgb(62, 10, 10);
+  color: rgb(185, 66, 218);
+}
 
-
+.project {
+  margin: 1.1rem;
+}
 
 
 
@@ -109,4 +117,7 @@ html, body {
 }
 .name {
   padding: 0;
+}
+.desc {
+  line-height: 1rem;
 }
