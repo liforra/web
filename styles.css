@@ -1,0 +1,80 @@
+@font-face {
+  font-family: "Edit Undo";
+  src: url("/fonts/editundo.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+:root,
+html,
+body {
+  font-family: "Edit Undo", system-ui, sans-serif !important;
+}
+
+/* ensure components inherit instead of forcing their own */
+* {
+  font-family: inherit !important;
+}
+
+.topnav {
+  position: fixed;
+  left: 0;
+  top: 0;
+  /*width: 100px;*/
+  height: 100vh;
+  z-index: 1000;
+  /* background-color: #80737300; /* Darker hover for dark background */
+}
+
+html, body {
+  background-color: #242424 !important; /* Force black background */
+  font-family: "Edit Undo", system-ui, sans-serif;
+}
+.main h1 {
+  font-size: 3.9rem ;
+  padding-bottom: 1.125rem ;
+}
+
+.main p {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.topnav a {
+  display: block; /* Changed from float: left */
+  /* color: #f2f2f2; */
+  text-align: center;
+  padding: 0.75rem 1.25rem; /* Better padding for vertical layout */
+  text-decoration: none;
+  font-size: 1.75rem;
+  margin-bottom: 0.375rem;
+  /* Removed position: fixed, left, width, height since parent handles positioning */
+  /* border-bottom: 1px solid #555; /* Changed from border around each link */
+  /* transition: background-color 0.3s ease; */
+  /* background-color: #ff0000; /* Darker hover for dark background */
+}
+
+.topnav a:hover {
+  /* color: white; */
+}
+
+.topnav a.active {
+  /* background-color: #8e18a9; */
+  /* color: white; */
+}
+
+.main {
+  font-size: 1.7rem;
+  margin-left: 235px;
+  padding: 20px;        /* outer spacing around the container */
+  color: rgb(200, 75, 245);
+  padding-top: 50px;
+  margin-right: 25rem;
+  background: transparent; /* or remove */
+}
+
+.main .snes-container {
+  background: #301a4a;  /* background lives inside border */
+}
