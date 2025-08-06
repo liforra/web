@@ -6,7 +6,9 @@
   font-display: swap;
 }
 
-
+.snes-container {
+  background-color: unset;
+}
 :root,
 html,
 body {
@@ -75,6 +77,36 @@ html, body {
   background: transparent; /* or remove */
 }
 
-.main .snes-container {
+.main-container {
   background: #301a4a;  /* background lives inside border */
+}
+
+.projects-grid {
+  display: grid;
+  gap: 0rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+.color-1 {
+  /*background-color:rgb(177, 187, 30);*/
+  background-color:pink;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.icon {
+  width: 4rem;
+  height: 4rem;
+}
+.name {
+  padding: 0;
 }

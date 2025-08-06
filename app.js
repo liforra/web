@@ -56,8 +56,8 @@ app.get('/keyfile', (req, res) => {
 
 
 
-app.use("/fonts", express.static("fonts"));
-app.use("/banners", express.static("88x31"));
+app.use("/fonts", express.static("assets/fonts"));
+app.use("/banners", express.static("assets/88x31"));
 app.use("/old", express.static("old-website"));
 
 // -- Files
