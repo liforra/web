@@ -63,11 +63,27 @@ app.use("/old", express.static("old-website"));
 
 // -- Files
 app.get('/theme.css', (req, res) => {
+    res.setHeader('Content-Type','text/css')
 	res.end(readfile("node_modules/snes.css/dist/snes.css"));
 });
 app.get('/styles.css', (req, res) => {
+    res.setHeader('Content-Type','text/css')
 	res.end(readfile("/styles.css"));
 });
+
+
+app.get('/checkDomain', (req, res) => {
+    res.setHeader('Content-Type','text/css')
+    if(req.header.host == "liforra.de") {
+        res.end(readfile(conditionalFiles/main.css))
+    } else if (req.header.host == "ekbyky7ey2d7arb7q6uctyaf4vhb72zlcpsdokmscsdpe6vvwcrrtkid.onion") {
+        res.end(readfile(conditionalFiles/onion.css))
+    } else if (req.header.host == "q3hpmogpmbv25pdvrceqr3ku454el4xam3u2iugooywfdsb5khea.b32.i2p") {
+        res.end(readFile(conditionalFiles/i2p.css))
+    }
+});
+
+
 
 
 
