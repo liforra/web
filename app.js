@@ -74,13 +74,16 @@ app.get('/styles.css', (req, res) => {
 
 app.get('/checkDomain', (req, res) => {
     res.setHeader('Content-Type','text/css')
-    if(req.header.host == "liforra.de") {
-        res.end(readfile(conditionalFiles/main.css))
-    } else if (req.header.host == "ekbyky7ey2d7arb7q6uctyaf4vhb72zlcpsdokmscsdpe6vvwcrrtkid.onion") {
-        res.end(readfile(conditionalFiles/onion.css))
-    } else if (req.header.host == "q3hpmogpmbv25pdvrceqr3ku454el4xam3u2iugooywfdsb5khea.b32.i2p") {
-        res.end(readFile(conditionalFiles/i2p.css))
+    if(req.header('Host') == "liforra.de") {
+        res.send(readfile("/conditionalFiles/main.css"))
+    } else if (req.header('Host') == "ekbyky7ey2d7arb7q6uctyaf4vhb72zlcpsdokmscsdpe6vvwcrrtkid.onion") {
+        res.send(readfile("/conditionalFiles/onion.css"))
+    } else if (req.header('Host') == "q3hpmogpmbv25pdvrceqr3ku454el4xam3u2iugooywfdsb5khea.b32.i2p") {
+        res.send(readFile("/conditionalFiles/i2p.css"))
+    } else {
+        res.send(req.header('Host'))
     }
+    res.end()
 });
 
 
@@ -90,10 +93,10 @@ app.get('/checkDomain', (req, res) => {
 // --- Redirects ---
 app.get('/search', (req, res) => {
     res.statusCode = 301;
-    if (req.headers.host == "liforra.de") {
+    if (req.header('Host') == "liforra.de") {
         res.setHeader('Location', 'https://s.liforra.de');
         
-    } else if (req.headers.host == "ekbyky7ey2d7arb7q6uctyaf4vhb72zlcpsdokmscsdpe6vvwcrrtkid.onion") {
+    } else if (req.header('Host') == "ekbyky7ey2d7arb7q6uctyaf4vhb72zlcpsdokmscsdpe6vvwcrrtkid.onion") {
         res.setHeader('Location', "www.exaple.com")
     } else {
         res.setHeader('Location', 'https://liforra.de/error')
