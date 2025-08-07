@@ -73,8 +73,13 @@ app.get('/styles.css', (req, res) => {
 // --- Redirects ---
 app.get('/search', (req, res) => {
     res.statusCode = 301;
-    res.setHeader('Location', 'https://s.liforra.de');
-    res.end();
+    if (res.headers.host == "liforra.de") {
+        res.setHeader('Location', 'https://s.liforra.de');
+        
+    } else if (res.headers.host == "ekbyky7ey2d7arb7q6uctyaf4vhb72zlcpsdokmscsdpe6vvwcrrtkid.onion")
+        res.setHeader('Location', "www.exaple.com")
+        res.end();
+
 });
 app.get('/vault', (req, res) => {
     res.statusCode = 301;
