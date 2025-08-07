@@ -75,11 +75,11 @@ app.get('/styles.css', (req, res) => {
 app.get('/checkDomain', (req, res) => {
     res.setHeader('Content-Type','text/css')
     if(req.header('Host') == "liforra.de") {
-        res.send(readfile("/conditionalFiles/main.css"))
+        res.send(readfile("conditionalFiles/main.css"))
     } else if (req.header('Host') == "ekbyky7ey2d7arb7q6uctyaf4vhb72zlcpsdokmscsdpe6vvwcrrtkid.onion") {
-        res.send(readfile("/conditionalFiles/onion.css"))
+        res.send(readfile("conditionalFiles/onion.css"))
     } else if (req.header('Host') == "q3hpmogpmbv25pdvrceqr3ku454el4xam3u2iugooywfdsb5khea.b32.i2p") {
-        res.send(readFile("/conditionalFiles/i2p.css"))
+        res.send(readFile("conditionalFiles/i2p.css"))
     } else {
         res.send(req.header('Host'))
     }
