@@ -1,6 +1,6 @@
 const fs = require('node:fs');
 const express = require('express');
-
+const { exec } = require('child_process');
 
 const app = express();
 const port = process.env.PORT;
@@ -84,13 +84,29 @@ app.get('/vault', (req, res) => {
 
 
 
-
+// -- API ---
+app.post('/updatesite', (req, res) => {
+    exec('git pull', (err, stdout, stderr) => {
+    if (err) {
+        res.statusCode = 500;
+        res.end(stderr)
+        return;
+    } else {
+        res.statusCode = 200;
+        res.end(stdout)
+    }
+    
+    // the *entire* stdout and stderr (buffered)
+    console.log(`${stdout}`);
+    console.log(`${stderr}`);
+    });
+});
 app.get('/api/test', (req, res) => {
     res.json({ message: 'API working!', timestamp: new Date() });
 });
 
 app.listen(port, '0.0.0.0', () => {
-    console.log(`Server running on http://127.0.0.1:${port}`);
+    console.log(`Server running on http://0.0.0.0:${port}`);
 });
 
 
