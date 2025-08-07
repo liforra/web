@@ -81,7 +81,11 @@ app.get('/vault', (req, res) => {
     res.setHeader('Location', 'https://v.liforra.de');
     res.end();
 });
-
+app.get('/tools', (req, res) => {
+    res.statusCode = 301;
+    res.setHeader('Location', 'https://nerds.liforra.de');
+    res.end();
+});
 
 
 // -- API ---
