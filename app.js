@@ -81,7 +81,7 @@ app.get('/checkDomain', (req, res) => {
     } else if (req.header('Host') == "q3hpmogpmbv25pdvrceqr3ku454el4xam3u2iugooywfdsb5khea.b32.i2p") {
         res.send(readfile("conditionalFiles/i2p.css"))
     } else {
-        res.send(req.header('Host'))
+        res.send(readfile("conditionalFiles/unknown.css"))
     }
     res.end()
 });
@@ -142,3 +142,4 @@ app.listen(port, '0.0.0.0', () => {
 });
 
 
+// TODO: Adjust sizes of html to fit nicer
