@@ -115,6 +115,23 @@ app.get('/checkDomain', (req, res) => {
 
 
 // --- Redirects ---
+
+
+app.get("/redir", (req, res) => {
+  const targetUrl = req.query.url || "";
+
+  // Load redir.html
+    let html = site("redir")
+    // Replace {{URL}} with the provided URL
+    html = html.replace(/{{URL}}/g, targetUrl);
+
+    res.setHeader("Content-Type", "text/html");
+    res.send(html);
+  });
+
+
+
+
 app.get('/search', (req, res) => {
     res.statusCode = 301;
     if (req.header('Host') == "liforra.de") {
@@ -123,7 +140,7 @@ app.get('/search', (req, res) => {
     } else if (req.header('Host') == "ekbyky7ey2d7arb7q6uctyaf4vhb72zlcpsdokmscsdpe6vvwcrrtkid.onion") {
         res.setHeader('Location', "http://2hj2tgkzj4w2kbwlt37ymk5z3lq7dskygw5qr5awmkx76p67yu3qn7qd.onion/")
     } else {
-        res.setHeader('Location', 'https://liforra.de/error?error=host')
+        res.setHeader('Location', '/redir?url=https%3A%2F%2Fs.liforra.de')
     }
     res.end();
 });
@@ -135,7 +152,7 @@ app.get('/vault', (req, res) => {
     } else if (req.header('Host') == "ekbyky7ey2d7arb7q6uctyaf4vhb72zlcpsdokmscsdpe6vvwcrrtkid.onion") {
         res.setHeader('Location', "http://lostzizeuqb5vfv5sab5xtaigzuhavd6itaalcj466uygav744klxtad.onion")
     } else {
-        res.setHeader('Location', 'https://liforra.de/error?error=host')
+        res.setHeader('Location', '/redir?url=https%3A%2F%2Fv.liforra.de')
     }
     res.end();
 });
@@ -147,7 +164,7 @@ app.get('/nerds', (req, res) => {
     } else if (req.header('Host') == "ekbyky7ey2d7arb7q6uctyaf4vhb72zlcpsdokmscsdpe6vvwcrrtkid.onion") {
         res.setHeader('Location', "http://ifspoug4hzpkj27ujfbekcwpcenx5hb4ggbk6xii7xhwmmmbug5jtlyd.onion")
     } else {
-        res.setHeader('Location', 'https://liforra.de/error?error=host')
+        res.setHeader('Location', '/redir?url=https%3A%2F%2Ftools.liforra.de')
     }
     res.end();
 });
