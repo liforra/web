@@ -189,7 +189,7 @@ app.get('/relay', (req, res) => {
     } else if (req.header('Host') == "ekbyky7ey2d7arb7q6uctyaf4vhb72zlcpsdokmscsdpe6vvwcrrtkid.onion") {
         res.setHeader('Location', "http://hctxrvjzfpvmzh2jllqhgvvkoepxb4kfzdjm6h7egcwlumggtktiftid.onion/rs.html#details/F30158BE186234337774F3FC9E5956F01B1DDBE6")
     } else {
-        res.setHeader('Location', 'https://liforra.de/error?error=host')
+        res.setHeader('Location', '/redir?url=https%3A%2F%2Fmetrics.torproject.org%2Frs.html%23details%2FF30158BE186234337774F3FC9E5956F01B1DDBE6')
     }
     res.end();
 });
