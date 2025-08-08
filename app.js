@@ -2,7 +2,7 @@ const fs = require('node:fs');
 const express = require('express');
 const { exec } = require('child_process');
 const { request } = require('node:http');
-
+const { execSync } = require("child_process");
 const app = express();
 const port = process.env.PORT;
 
@@ -33,8 +33,18 @@ function readfile(path) {
         throw error;
     }
 }
-
-
+function isServiceUp(url) {
+    try {
+    execSync(`curl -Is --max-time 5 ${url} | head -n 1 | grep "200"`, {
+        stdio: "ignore",
+    });
+    console.log("I'm able to reach " + url)
+    return true;
+    } catch {
+        console.log("I'm not able to reach " + url)
+    return false;
+    }
+}
 
 
 
@@ -43,8 +53,21 @@ app.get('/', (req, res) => {
 	res.end(readpath("/"));
 });
 
-app.get('/projects', (req, res) => {
-	res.end(site("projects"));
+app.get("/projects", (req, res) => {
+    let html = site("projects");
+    console.log("Im running more then once")
+    const services = {
+        SEARCH_CLASS: isServiceUp("https://search.liforra.de/") ? "online" : "offline",
+        VAULT_CLASS: isServiceUp("https://v.liforra.de/") ? "online" : "offline",
+        TOOLS_CLASS: isServiceUp("https://nerds.liforra.de/") ? "online" : "offline",
+        CLOUD_CLASS: isServiceUp("https://cloud.liforra.de/") ? "online" : "offline",
+    };
+
+    for (const [placeholder, status] of Object.entries(services)) {
+    html = html.replace(`{{${placeholder}}}`, status);
+    }
+
+    res.end(html);
 });
 
 app.get('/banners', (req, res) => {
