@@ -56,10 +56,11 @@ app.get('/keyfile', (req, res) => {
 
 
 
-
+// -- Folders
 app.use("/fonts", express.static("assets/fonts"));
 app.use("/banners", express.static("assets/88x31"));
 app.use("/old", express.static("old-website"));
+app.use("/assets/tor", express.static("assets/tor"));
 
 // -- Files
 app.get('/theme.css', (req, res) => {
@@ -140,6 +141,20 @@ app.get('/t', (req, res) => {
     }
     res.end();
 });
+
+app.get('/relay', (req, res) => {
+    res.statusCode = 301;
+    if (req.header('Host') == "liforra.de") {
+        res.setHeader('Location', 'https://https://metrics.torproject.org/rs.html#details/F30158BE186234337774F3FC9E5956F01B1DDBE6');
+    } else if (req.header('Host') == "ekbyky7ey2d7arb7q6uctyaf4vhb72zlcpsdokmscsdpe6vvwcrrtkid.onion") {
+        res.setHeader('Location', "http://hctxrvjzfpvmzh2jllqhgvvkoepxb4kfzdjm6h7egcwlumggtktiftid.onion/rs.html#details/F30158BE186234337774F3FC9E5956F01B1DDBE6")
+    } else {
+        res.setHeader('Location', 'https://liforra.de/error?error=host')
+    }
+    res.end();
+});
+
+
 
 //app.get('', (req, res) => {
 //    res.statusCode = 301;
