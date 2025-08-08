@@ -133,7 +133,7 @@ app.get('/vault', (req, res) => {
         res.setHeader('Location', 'https://v.liforra.de');
         
     } else if (req.header('Host') == "ekbyky7ey2d7arb7q6uctyaf4vhb72zlcpsdokmscsdpe6vvwcrrtkid.onion") {
-        res.setHeader('Location', "lostzizeuqb5vfv5sab5xtaigzuhavd6itaalcj466uygav744klxtad.onion")
+        res.setHeader('Location', "http://lostzizeuqb5vfv5sab5xtaigzuhavd6itaalcj466uygav744klxtad.onion")
     } else {
         res.setHeader('Location', 'https://liforra.de/error?error=host')
     }
@@ -145,7 +145,7 @@ app.get('/nerds', (req, res) => {
         res.setHeader('Location', 'https://nerds.liforra.de');
         
     } else if (req.header('Host') == "ekbyky7ey2d7arb7q6uctyaf4vhb72zlcpsdokmscsdpe6vvwcrrtkid.onion") {
-        res.setHeader('Location', "ifspoug4hzpkj27ujfbekcwpcenx5hb4ggbk6xii7xhwmmmbug5jtlyd.onion")
+        res.setHeader('Location', "http://ifspoug4hzpkj27ujfbekcwpcenx5hb4ggbk6xii7xhwmmmbug5jtlyd.onion")
     } else {
         res.setHeader('Location', 'https://liforra.de/error?error=host')
     }
@@ -158,7 +158,7 @@ app.get('/t', (req, res) => {
         res.setHeader('Location', 'https://t.liforra.de');
         
     } else if (req.header('Host') == "ekbyky7ey2d7arb7q6uctyaf4vhb72zlcpsdokmscsdpe6vvwcrrtkid.onion") {
-        res.setHeader('Location', "saroor4xo6hlelunsrxkohpowpsm6arzl6n45bvzkxf5p6b2ivlcuaid.onion")
+        res.setHeader('Location', "http://saroor4xo6hlelunsrxkohpowpsm6arzl6n45bvzkxf5p6b2ivlcuaid.onion")
     } else {
         res.setHeader('Location', 'https://liforra.de/error?error=host')
     }
