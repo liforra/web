@@ -145,7 +145,7 @@ app.get('/t', (req, res) => {
 app.get('/relay', (req, res) => {
     res.statusCode = 301;
     if (req.header('Host') == "liforra.de") {
-        res.setHeader('Location', 'https://https://metrics.torproject.org/rs.html#details/F30158BE186234337774F3FC9E5956F01B1DDBE6');
+        res.setHeader('Location', 'https://metrics.torproject.org/rs.html#details/F30158BE186234337774F3FC9E5956F01B1DDBE6');
     } else if (req.header('Host') == "ekbyky7ey2d7arb7q6uctyaf4vhb72zlcpsdokmscsdpe6vvwcrrtkid.onion") {
         res.setHeader('Location', "http://hctxrvjzfpvmzh2jllqhgvvkoepxb4kfzdjm6h7egcwlumggtktiftid.onion/rs.html#details/F30158BE186234337774F3FC9E5956F01B1DDBE6")
     } else {
