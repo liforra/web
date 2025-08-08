@@ -1,3 +1,6 @@
+/* =========================
+   FONT IMPORT
+   ========================= */
 @font-face {
   font-family: "Edit Undo";
   src: url("/fonts/editundo.ttf") format("truetype");
@@ -6,118 +9,133 @@
   font-display: swap;
 }
 
-.snes-container {
-  background-color: unset;
-}
+/* =========================
+   GLOBAL STYLES
+   ========================= */
 :root,
 html,
 body {
   font-family: "Edit Undo", system-ui, sans-serif !important;
+  background-color: #242424 !important;
+  font-size: 80%; /* scale everything down */
 }
 
-/* ensure components inherit instead of forcing their own */
 * {
   font-family: inherit !important;
+  box-sizing: border-box;
 }
 
+/* =========================
+   TOP NAVIGATION
+   ========================= */
 .topnav {
   position: fixed;
   left: 0;
   top: 0;
-  /*width: 100px;*/
   height: 100vh;
   z-index: 1000;
-  /* background-color: #80737300; /* Darker hover for dark background */
-}
-
-html, body {
-  background-color: #242424 !important; /* Force black background */
-  font-family: "Edit Undo", system-ui, sans-serif;
-}
-.main h1 {
-  font-size: 3.9rem ;
-  padding-bottom: 1.125rem ;
-}
-
-.main p {
-  font-size: 2rem;
-  line-height: 1;
 }
 
 .topnav a {
-  display: block; /* Changed from float: left */
-  /* color: #f2f2f2; */
+  display: block;
   text-align: center;
-  padding: 0.75rem 1.25rem; /* Better padding for vertical layout */
+  padding: 0.6rem 1rem;
   text-decoration: none;
-  font-size: 1.75rem;
-  margin-bottom: 0.375rem;
-  /* Removed position: fixed, left, width, height since parent handles positioning */
-  /* border-bottom: 1px solid #555; /* Changed from border around each link */
-  /* transition: background-color 0.3s ease; */
-  /* background-color: #ff0000; /* Darker hover for dark background */
+  font-size: 1.4rem;
+  margin-bottom: 0.3rem;
 }
 
-.topnav a:hover {
-  /* color: white; */
-}
-
-.topnav a.active {
-  /* background-color: #8e18a9; */
-  /* color: white; */
-}
-
+/* =========================
+   MAIN CONTENT
+   ========================= */
 .main {
-  font-size: 1.7rem;
-  margin-left: 235px;
-  padding: 20px;        /* outer spacing around the container */
+  font-size: 1.36rem;
+  margin-left: 188px;
+  padding: 16px;
+  padding-top: 40px;
+  margin-right: 20rem;
   color: rgb(200, 75, 245);
-  padding-top: 50px;
-  margin-right: 25rem;
-  background: transparent; /* or remove */
+  background: transparent;
+}
+
+.main h1 {
+  font-size: 3.12rem;
+  padding-bottom: 0.9rem;
+}
+
+.main p {
+  font-size: 1.6rem;
+  line-height: 1.2;
 }
 
 .main-container {
-  background: #301a4a;  /* background lives inside border */
+  background: #301a4a;
 }
 
+/* =========================
+   PROJECTS GRID
+   ========================= */
 .projects-grid {
   display: grid;
-  gap: 0rem;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
 }
+
+.snes-button.project {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0; /* Let inner content handle spacing */
+}
+
+.project-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  padding: 1rem;
+  min-height: 12rem; /* consistent height */
+  width: 100%;
+}
+
+.project-content img.icon {
+  width: 3rem;
+  height: 3rem;
+  object-fit: contain;
+  margin-bottom: 0.5rem;
+}
+
+.project-content .name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 0.25rem 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.project-content .desc {
+  font-size: 1.3rem; /* increased from 1.1rem */
+  line-height: 1.4rem; /* tighter spacing for efficiency */
+  color: #d8a0f0;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* limit to 3 lines */
+  -webkit-box-orient: vertical;
+  word-break: break-word;
+}
+
+/* =========================
+   STATUS COLORS
+   ========================= */
 .online {
-  /*background-color:rgb(177, 187, 30);*/
-  background-color:rgb(10, 62, 40);
+  background-color: rgb(10, 62, 40);
   color: rgb(185, 66, 218);
 }
 
 .offline {
-  /*background-color:rgb(177, 187, 30);*/
-  background-color:rgb(62, 10, 10);
+  background-color: rgb(62, 10, 10);
   color: rgb(185, 66, 218);
-}
-
-.project {
-  margin: 1.1rem;
-}
-
-
-
-
-
-
-
-
-
-
-.icon {
-  width: 4rem;
-  height: 4rem;
-}
-.name {
-  padding: 0;
-}
-.desc {
-  line-height: 1rem;
 }
