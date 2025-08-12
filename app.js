@@ -303,9 +303,6 @@ app.post('/updatesite', (req, res) => {
 app.get('/api/test', (req, res) => {
     res.json({ message: 'API working!', timestamp: new Date() });
 });
-app.get('/api/crash', (res, req) => {
-	Yeah im here to just crash the server
-})
 app.listen(port, '0.0.0.0', () => {
     console.log(`Server running on http://0.0.0.0:${port}`);
 });
