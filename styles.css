@@ -8,7 +8,13 @@
   font-style: normal;
   font-display: swap;
 }
-
+@font-face {
+  font-family: "Exo 2";
+  src: url("/fonts/exo2.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 /* =========================
    GLOBAL STYLES
    ========================= */
@@ -66,6 +72,7 @@ body {
 .main p {
   font-size: 1.6rem;
   line-height: 1.2;
+  font-family: 'Exo 2';
 }
 
 .main-container {

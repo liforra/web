@@ -53,6 +53,10 @@ app.get('/', (req, res) => {
 	res.end(readpath("/"));
 });
 
+app.get('/me', (req, res) => {
+    res.end(site("/me"))
+})
+
 app.get("/projects", (req, res) => {
     let html = site("projects");
     console.log("Im running more then once")
