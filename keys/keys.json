@@ -1,0 +1,16 @@
+[
+  {
+    "id": "git",
+    "name": "Git",
+    "desc": "PGP public key for Git at liforra.de",
+    "fingerprint": "BD03727B02874C3A3233B3DB723D4DC2FD70078D",
+    "pubkey_url": "/keys/git.asc"
+  },
+  {
+    "id": "main",
+    "name": "Main Identity Key",
+    "desc": "Used to sign keys and messages",
+    "fingerprint": "3164F1E7C0D087514D98A02B255714B66468B94B",
+    "pubkey_url": "/keys/main.asc"
+  }
+]

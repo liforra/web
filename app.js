@@ -73,7 +73,63 @@ app.get("/projects", (req, res) => {
 
     res.end(html);
 });
+app.get('/key/raw/:id', (req,res) => {
+	let keys = JSON.parse(readfile("keys/keys.json"));
+    let key = keys.find(
+        k => k.id.toLowerCase() === req.params.id.toLowerCase()
+    );
 
+    if (key) {
+		res.end(readfile(key.pubkey_url))
+	}
+});
+
+
+
+app.get('/keys', (req,res) => {
+    let keys = JSON.parse(readfile("keys/keys.json"));
+	const structure = site("structure/key")
+	let html = site("/keys")
+	keys.forEach(key => {
+		data = structure
+		data = data.replace(/{{PGPKEYNAME}}/g, key.name);
+		data = data.replace(/{{DESC}}/g, key.desc);
+		data = data.replace(/{{id}}/g, key.id);
+		data = data + "{{INSERTKEY}}\n"
+		html = html.replace(/{{INSERTKEY}}/g, data);
+		console.log(html)
+		
+	});
+		html = html.replace(/{{INSERTKEY}}/g, "");
+		res.send(html)
+});
+
+
+
+
+
+
+app.get('/key/:id', (req,res) => {
+    let keys = JSON.parse(readfile("keys/keys.json"));
+    let key = keys.find(
+        k => k.id.toLowerCase() === req.params.id.toLowerCase()
+    );
+
+    if (key) {
+		let html = site("key")
+		html = html.replace(/{{PGPKEYNAME}}/g, key.name);
+		html = html.replace(/{{DESC}}/g, key.desc);
+		html = html.replace(/{{FINGERPRINT}}/g, key.fingerprint);
+		htmlsafekey = readfile(key.pubkey_url).replace(/\n/g, "<br>")
+		html = html.replace(/{{PGPKEY}}/g, htmlsafekey);
+		html = html.replace(/{{KEYURL}}/g, key.pubkey_url);
+		html = html.replace(/{{id}}/g, key.id);
+		res.send(html)
+		res.end()
+    } else {
+        res.status(404).send("Key not found");
+    }
+    });
 app.get('/banners', (req, res) => {
 	res.end(site("banners"));
 });
@@ -88,6 +144,8 @@ app.use("/fonts", express.static("assets/fonts"));
 app.use("/banners", express.static("assets/88x31"));
 app.use("/old", express.static("old-website"));
 app.use("/assets/tor", express.static("assets/tor"));
+app.use("/keys", express.static("keys"));
+
 
 // -- Files
 app.get('/theme.css', (req, res) => {
