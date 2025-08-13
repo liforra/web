@@ -145,3 +145,28 @@ body {
   background-color: rgb(62, 10, 10);
   color: rgb(185, 66, 218);
 }
+
+
+
+.contact-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.contact-list li {
+  margin: 0.4rem 0;
+}
+
+.contact-list .snes-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.smallimage {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  image-rendering: pixelated; /* optional retro vibe */
+}

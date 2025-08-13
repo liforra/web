@@ -35,14 +35,14 @@ function readfile(path) {
 }
 function isServiceUp(url) {
     try {
-    execSync(`curl -Is --max-time 5 ${url} | head -n 1 | grep "200"`, {
-        stdio: "ignore",
-    });
-    console.log("I'm able to reach " + url)
-    return true;
+        execSync(`curl -Is --max-time 5 ${url} | head -n 1 | grep "200"`, {
+            stdio: "ignore",
+        });
+        console.log("I'm able to reach " + url)
+        return true;
     } catch {
         console.log("I'm not able to reach " + url)
-    return false;
+        return false;
     }
 }
 
@@ -50,7 +50,7 @@ function isServiceUp(url) {
 
 // -- Routes
 app.get('/', (req, res) => {
-	res.end(readpath("/"));
+    res.end(readpath("/"));
 });
 
 app.get('/me', (req, res) => {
@@ -66,42 +66,42 @@ app.get("/projects", (req, res) => {
         TOOLS_CLASS: isServiceUp("https://nerds.liforra.de/") ? "online" : "offline",
         CLOUD_CLASS: isServiceUp("https://cloud.liforra.de/") ? "online" : "offline",
     };
-
+    
     for (const [placeholder, status] of Object.entries(services)) {
-    html = html.replace(`{{${placeholder}}}`, status);
+        html = html.replace(`{{${placeholder}}}`, status);
     }
-
+    
     res.end(html);
 });
 app.get('/key/raw/:id', (req,res) => {
-	let keys = JSON.parse(readfile("keys/keys.json"));
+    let keys = JSON.parse(readfile("keys/keys.json"));
     let key = keys.find(
         k => k.id.toLowerCase() === req.params.id.toLowerCase()
     );
-
+    
     if (key) {
-		res.end(readfile(key.pubkey_url))
-	}
+        res.end(readfile(key.pubkey_url))
+    }
 });
 
 
 
 app.get('/keys', (req,res) => {
     let keys = JSON.parse(readfile("keys/keys.json"));
-	const structure = site("structure/key")
-	let html = site("/keys")
-	keys.forEach(key => {
-		data = structure
-		data = data.replace(/{{PGPKEYNAME}}/g, key.name);
-		data = data.replace(/{{DESC}}/g, key.desc);
-		data = data.replace(/{{id}}/g, key.id);
-		data = data + "{{INSERTKEY}}\n"
-		html = html.replace(/{{INSERTKEY}}/g, data);
-		console.log(html)
-		
-	});
-		html = html.replace(/{{INSERTKEY}}/g, "");
-		res.send(html)
+    const structure = site("structure/key")
+    let html = site("/keys")
+    keys.forEach(key => {
+        data = structure
+        data = data.replace(/{{PGPKEYNAME}}/g, key.name);
+        data = data.replace(/{{DESC}}/g, key.desc);
+        data = data.replace(/{{id}}/g, key.id);
+        data = data + "{{INSERTKEY}}\n"
+        html = html.replace(/{{INSERTKEY}}/g, data);
+        console.log(html)
+        
+    });
+    html = html.replace(/{{INSERTKEY}}/g, "");
+    res.send(html)
 });
 
 
@@ -114,27 +114,27 @@ app.get('/key/:id', (req,res) => {
     let key = keys.find(
         k => k.id.toLowerCase() === req.params.id.toLowerCase()
     );
-
+    
     if (key) {
-		let html = site("key")
-		html = html.replace(/{{PGPKEYNAME}}/g, key.name);
-		html = html.replace(/{{DESC}}/g, key.desc);
-		html = html.replace(/{{FINGERPRINT}}/g, key.fingerprint);
-		htmlsafekey = readfile(key.pubkey_url).replace(/\n/g, "<br>")
-		html = html.replace(/{{PGPKEY}}/g, htmlsafekey);
-		html = html.replace(/{{KEYURL}}/g, key.pubkey_url);
-		html = html.replace(/{{id}}/g, key.id);
-		res.send(html)
-		res.end()
+        let html = site("key")
+        html = html.replace(/{{PGPKEYNAME}}/g, key.name);
+        html = html.replace(/{{DESC}}/g, key.desc);
+        html = html.replace(/{{FINGERPRINT}}/g, key.fingerprint);
+        htmlsafekey = readfile(key.pubkey_url).replace(/\n/g, "<br>")
+        html = html.replace(/{{PGPKEY}}/g, htmlsafekey);
+        html = html.replace(/{{KEYURL}}/g, key.pubkey_url);
+        html = html.replace(/{{id}}/g, key.id);
+        res.send(html)
+        res.end()
     } else {
         res.status(404).send("Key not found");
     }
-    });
+});
 app.get('/banners', (req, res) => {
-	res.end(site("banners"));
+    res.end(site("banners"));
 });
 app.get('/keyfile', (req, res) => {
-	res.end(readfile("/old-website/keyfile"));
+    res.end(readfile("/old-website/keyfile"));
 });
 
 
@@ -145,16 +145,16 @@ app.use("/banners", express.static("assets/88x31"));
 app.use("/old", express.static("old-website"));
 app.use("/assets/tor", express.static("assets/tor"));
 app.use("/keys", express.static("keys"));
-
+app.use("/assets/icons", express.static("assets/icons"));
 
 // -- Files
 app.get('/theme.css', (req, res) => {
     res.setHeader('Content-Type','text/css')
-	res.end(readfile("node_modules/snes.css/dist/snes.css"));
+    res.end(readfile("node_modules/snes.css/dist/snes.css"));
 });
 app.get('/styles.css', (req, res) => {
     res.setHeader('Content-Type','text/css')
-	res.end(readfile("/styles.css"));
+    res.end(readfile("/styles.css"));
 });
 
 
@@ -180,19 +180,98 @@ app.get('/checkDomain', (req, res) => {
 
 
 app.get("/redir", (req, res) => {
-  const targetUrl = req.query.url || "";
-
-  // Load redir.html
+    const targetUrl = req.query.url || "";
+    
+    // Load redir.html
     let html = site("redir")
     // Replace {{URL}} with the provided URL
     html = html.replace(/{{URL}}/g, targetUrl);
-
+    
     res.setHeader("Content-Type", "text/html");
     res.send(html);
-  });
+});
 
 
+app.get("/simplexchat", (req, res) => {
+    res.statusCode = 301;
+    res.setHeader(
+        "Location",
+        "https://smp16.simplex.im/a#BWKNrxRGVVY-TLEW_C3U-rGavO8MbwY-E4k5Jrkgsf8"
+    );
+    res.end();
+});
 
+// Signal
+app.get("/signal", (req, res) => {
+    res.statusCode = 301;
+    res.setHeader(
+        "Location",
+        "https://signal.me/#eu/Dljz4HbJUL2dGuYqccBGgqRkHnVei_gq-s7FV9CB6NiZ2X_VEqRPoogqILPkgBLW"
+    );
+    res.end();
+});
+
+// Matrix (Beeper)
+app.get("/matrix", (req, res) => {
+    res.statusCode = 301;
+    res.setHeader("Location", "https://matrix.to/#/@liforra:beeper.com");
+    res.end();
+});
+
+// WhatsApp
+app.get("/whatsapp", (req, res) => {
+    res.statusCode = 301;
+    res.setHeader("Location", "https://app.formbricks.com/s/cmeaaempicq9vu601vqx8u4fa");
+    res.end();
+});
+
+// Session
+app.get("/session", (req, res) => {
+    res.statusCode = 301;
+    res.setHeader(
+        "Location",
+        "https://getsession.org/#05f0a919336cb3589337b5bd9ffd5c03e0ca042be19d81a1ec1e417cb3ccec842f"
+    );
+    res.end();
+});
+
+// Discord
+app.get("/discord", (req, res) => {
+    res.statusCode = 301;
+    res.setHeader("Location", "https://discord.com/users/liforra");
+    res.end();
+});
+
+// Telegram
+app.get("/telegram", (req, res) => {
+    res.statusCode = 301;
+    res.setHeader("Location", "https://t.me/liforra");
+    res.end();
+});
+
+// Snapchat
+app.get("/snapchat", (req, res) => {
+    res.statusCode = 301;
+    res.setHeader(
+        "Location",
+        "https://www.snapchat.com/add/liforra?share_id=YeKk2mVRsgY&locale=en-DE"
+    );
+    res.end();
+});
+
+// X (Twitter)
+app.get("/x", (req, res) => {
+    res.statusCode = 301;
+    res.setHeader("Location", "https://x.com/Liforra2");
+    res.end();
+});
+
+// Email
+app.get("/email", (req, res) => {
+    res.statusCode = 301;
+    res.setHeader("Location", "mailto:mail@liforra.de");
+    res.end();
+});
 
 app.get('/search', (req, res) => {
     res.statusCode = 301;
@@ -259,14 +338,14 @@ app.get('/relay', (req, res) => {
 
 
 //app.get('', (req, res) => {
-//    res.statusCode = 301;
+    //    res.statusCode = 301;
 //    if (req.header('Host') == "liforra.de") {
 //        res.setHeader('Location', 'https://.liforra.de');
 //        
 //    } else if (req.header('Host') == "ekbyky7ey2d7arb7q6uctyaf4vhb72zlcpsdokmscsdpe6vvwcrrtkid.onion") {
 //        res.setHeader('Location', "")
 //    } else {
-//        res.setHeader('Location', 'https://liforra.de/error?error=host')
+    //        res.setHeader('Location', 'https://liforra.de/error?error=host')
 //    }
 //    res.end();
 //});
@@ -286,18 +365,18 @@ app.get('/tools', (req, res) => {
 // -- API ---
 app.post('/updatesite', (req, res) => {
     exec('git pull', (err, stdout, stderr) => {
-    if (err) {
-        res.statusCode = 500;
-        res.end(stderr)
-        return;
-    } else {
-        res.statusCode = 200;
-        res.end(stdout)
-    }
-    
-    // the *entire* stdout and stderr (buffered)
-    console.log(`${stdout}`);
-    console.log(`${stderr}`);
+        if (err) {
+            res.statusCode = 500;
+            res.end(stderr)
+            return;
+        } else {
+            res.statusCode = 200;
+            res.end(stdout)
+        }
+        
+        // the *entire* stdout and stderr (buffered)
+        console.log(`${stdout}`);
+        console.log(`${stderr}`);
     });
 });
 app.get('/api/test', (req, res) => {
