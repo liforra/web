@@ -65,6 +65,8 @@ app.get("/projects", (req, res) => {
         VAULT_CLASS: isServiceUp("https://v.liforra.de/") ? "online" : "offline",
         TOOLS_CLASS: isServiceUp("https://nerds.liforra.de/") ? "online" : "offline",
         CLOUD_CLASS: isServiceUp("https://cloud.liforra.de/") ? "online" : "offline",
+        SEND_CLASS: isServiceUp("https://send.liforra.de/") ? "online" : "offline",
+
     };
     
     for (const [placeholder, status] of Object.entries(services)) {
@@ -335,7 +337,18 @@ app.get('/relay', (req, res) => {
     res.end();
 });
 
-
+app.get('/send', (req, res) => {
+    res.statusCode = 301;
+    if (req.header('Host') == "liforra.de") {
+        res.setHeader('Location', 'https://send.liforra.de');
+        
+    } else if (req.header('Host') == "ekbyky7ey2d7arb7q6uctyaf4vhb72zlcpsdokmscsdpe6vvwcrrtkid.onion") {
+        res.setHeader('Location', "http://xudlwxzy7pb2ncctoaau7hs5jugc4brnmtxik3tlkzaeoprs4ccpqzyd.onion/")
+    } else {
+        res.setHeader('Location', '/redir?url=https%3A%2F%2Fsend.liforra.de')
+    }
+    res.end();
+});
 
 //app.get('', (req, res) => {
     //    res.statusCode = 301;
