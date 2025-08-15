@@ -77,6 +77,7 @@ app.get('/sitemap.xml', (req, res) => {
 app.get('/favicon.png', (req, res) => {
     res.setHeader('Content-Type','image/png')
     res.sendFile(__dirname + "/favicon.png");
+    res.end()
 });
 app.get('/favicon.ico', (req, res) => {
     res.end(readfile("./pfp.ico"));
