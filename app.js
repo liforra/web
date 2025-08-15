@@ -71,6 +71,11 @@ function isServiceUp(url) {
 app.get('/', (req, res) => {
     res.end(readpath("/"));
 });
+app.get('/sitemap.xml', (req, res) => {
+    res.end(readfile("/sitemap"));
+});
+
+
 
 app.get('/me', (req, res) => {
     res.end(site("/me"))

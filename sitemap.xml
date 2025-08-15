@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+		<!--	created with www.mysitemapgenerator.com	-->
+		<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url>
+	<loc>https://liforra.de/</loc>
+	<lastmod>2025-08-15T19:04:14+01:00</lastmod>
+	<priority>1.0</priority>
+</url>
+<url>
+	<loc>https://liforra.de/projects</loc>
+	<lastmod>2025-08-15T19:04:14+01:00</lastmod>
+	<priority>1.0</priority>
+</url>
+<url>
+	<loc>https://liforra.de/me</loc>
+	<lastmod>2025-08-15T19:04:14+01:00</lastmod>
+	<priority>1.0</priority>
+</url>
+<url>
+	<loc>https://liforra.de/keys</loc>
+	<lastmod>2025-08-15T19:04:14+01:00</lastmod>
+	<priority>1.0</priority>
+</url>
+<url>
+	<loc>https://liforra.de/banners</loc>
+	<lastmod>2025-08-15T19:04:14+01:00</lastmod>
+	<priority>1.0</priority>
+</url>
+<url>
+	<loc>https://liforra.de/key/git</loc>
+	<lastmod>2025-08-15T19:04:17+01:00</lastmod>
+	<priority>0.8</priority>
+</url>
+<url>
+	<loc>https://liforra.de/key/main</loc>
+	<lastmod>2025-08-15T19:04:17+01:00</lastmod>
+	<priority>0.8</priority>
+</url>
+<url>
+	<loc>https://liforra.de/key/raw/git</loc>
+	<lastmod>2025-08-15T19:04:18+01:00</lastmod>
+	<priority>0.6</priority>
+</url>
+<url>
+	<loc>https://liforra.de/key/raw/main</loc>
+	<lastmod>2025-08-15T19:04:18+01:00</lastmod>
+	<priority>0.6</priority>
+</url>
+</urlset>
