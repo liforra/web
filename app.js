@@ -74,7 +74,17 @@ app.get('/', (req, res) => {
 app.get('/sitemap.xml', (req, res) => {
     res.end(readfile("/sitemap.xml"));
 });
+app.get('/favicon.png', (req, res) => {
+    res.setHeader('Content-Type','image/png')
+    res.end(readfile("./pfp.png"));
+});
+app.get('/favicon.ico', (req, res) => {
+    res.end(readfile("./pfp.ico"));
+});
 
+app.get('/robots.txt', (req, res) => {
+    res.end(readfile("/robots.txt"));
+});
 
 
 app.get('/me', (req, res) => {
