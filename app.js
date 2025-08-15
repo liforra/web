@@ -5,6 +5,9 @@ const { request } = require('node:http');
 const { execSync } = require("child_process");
 const app = express();
 const port = process.env.PORT;
+const http = require('http');
+const uap = require('ua-parser-js');
+
 
 // Middleware for static files
 app.use(express.static('public'));
@@ -12,7 +15,7 @@ app.use(express.json());
 app.use((req, res, next) => {
     const ip =
     req.headers["x-forwarded-for"]?.split(",")[0] || req.socket.remoteAddress;
-    console.log(`[IP Logger] ${ip} -> ${req.method} ${req.url}`);
+    let ua = uap(req.headers['user-agent']);
     next(); // Pass control to the next middleware/route
     fetch(process.env.NTFY, {
         method: "POST",
@@ -20,10 +23,11 @@ app.use((req, res, next) => {
             "Title": "Website",
             "Priority": "high"
         },
-        body: `${ip} - ${req.url}`
+        body: `${ip} - ${req.url} --- ${ua.browser["name"]} ${ua.browser["version"]} ${ua.os["name"]} ${ua.os["version"]}`
     }).catch(err => {
         console.error("Failed to send notification:", err);
     });
+    console.log(`${ip} - ${req.url} --- ${ua.browser["name"]} ${ua.browser["version"]} ${ua.os["name"]} ${ua.os["version"]}` );
 });
 
 
