@@ -9,7 +9,22 @@ const port = process.env.PORT;
 // Middleware for static files
 app.use(express.static('public'));
 app.use(express.json());
-
+app.use((req, res, next) => {
+    const ip =
+    req.headers["x-forwarded-for"]?.split(",")[0] || req.socket.remoteAddress;
+    console.log(`[IP Logger] ${ip} -> ${req.method} ${req.url}`);
+    next(); // Pass control to the next middleware/route
+    fetch(process.env.NTFY, {
+        method: "POST",
+        headers: {
+            "Title": "Website",
+            "Priority": "high"
+        },
+        body: `${ip} - ${req.url}`
+    }).catch(err => {
+        console.error("Failed to send notification:", err);
+    });
+});
 
 
 function readpath(path) {
@@ -66,7 +81,7 @@ app.get("/projects", (req, res) => {
         TOOLS_CLASS: isServiceUp("https://nerds.liforra.de/") ? "online" : "offline",
         CLOUD_CLASS: isServiceUp("https://cloud.liforra.de/") ? "online" : "offline",
         SEND_CLASS: isServiceUp("https://send.liforra.de/") ? "online" : "offline",
-
+        
     };
     
     for (const [placeholder, status] of Object.entries(services)) {
