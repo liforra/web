@@ -72,7 +72,7 @@ app.get('/', (req, res) => {
     res.end(readpath("/"));
 });
 app.get('/sitemap.xml', (req, res) => {
-    res.end(readfile("/sitemap"));
+    res.end(readfile("/sitemap.xml"));
 });
 
 
