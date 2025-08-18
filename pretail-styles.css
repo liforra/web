@@ -1,0 +1,173 @@
+@import "./node_modules/snes.css/dist/snes.css";
+/* =========================
+   FONT IMPORT
+   ========================= */
+@font-face {
+  font-family: "Edit Undo";
+  src: url("/fonts/editundo.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Exo 2";
+  src: url("/fonts/exo2.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+/* =========================
+   GLOBAL STYLES
+   ========================= */
+:root,
+html,
+body {
+  font-family: "Edit Undo", system-ui, sans-serif !important;
+  background-color: #242424 !important;
+  font-size: 80%; /* scale everything down */
+}
+
+* {
+  font-family: inherit !important;
+  box-sizing: border-box;
+}
+
+/* =========================
+   TOP NAVIGATION
+   ========================= */
+.topnav {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  z-index: 1000;
+}
+
+.topnav a {
+  display: block;
+  text-align: center;
+  padding: 0.6rem 1rem;
+  text-decoration: none;
+  font-size: 1.4rem;
+  margin-bottom: 0.3rem;
+}
+
+/* =========================
+   MAIN CONTENT
+   ========================= */
+.main {
+  font-size: 1.36rem;
+  margin-left: 188px;
+  padding: 16px;
+  padding-top: 40px;
+  margin-right: 20rem;
+  color: rgb(200, 75, 245);
+  background: transparent;
+}
+
+.main h1 {
+  font-size: 3.12rem;
+  padding-bottom: 0.9rem;
+}
+
+.main p {
+  font-size: 1.6rem;
+  line-height: 1.2;
+  font-family: 'Exo 2';
+}
+
+.main-container {
+  background: #301a4a;
+}
+
+/* =========================
+   PROJECTS GRID
+   ========================= */
+.projects-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.snes-button.project {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0; /* Let inner content handle spacing */
+}
+
+.project-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  padding: 1rem;
+  min-height: 12rem; /* consistent height */
+  width: 100%;
+}
+
+.project-content img.icon {
+  width: 3rem;
+  height: 3rem;
+  object-fit: contain;
+  margin-bottom: 0.5rem;
+}
+
+.project-content .name {
+  font-size: 1.7rem; /* increased from 1.2rem */
+  font-weight: bold;
+  margin: 0.25rem 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+.project-content .desc {
+  font-size: 1.3rem; /* increased from 1.1rem */
+  line-height: 1.4rem; /* tighter spacing for efficiency */
+  color: #d8a0f0;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* limit to 3 lines */
+  -webkit-box-orient: vertical;
+  word-break: break-word;
+}
+
+/* =========================
+   STATUS COLORS
+   ========================= */
+.online {
+  background-color: rgb(10, 62, 40);
+  color: rgb(185, 66, 218);
+}
+
+.offline {
+  background-color: rgb(62, 10, 10);
+  color: rgb(185, 66, 218);
+}
+
+
+
+.contact-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.contact-list li {
+  margin: 0.4rem 0;
+}
+
+.contact-list .snes-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.smallimage {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  image-rendering: pixelated; /* optional retro vibe */
+}
