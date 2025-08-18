@@ -11,10 +11,12 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@tailwindcss/cli": "^4.1.12",
     "anubis": "^2.0.0",
     "express": "^5.1.0",
     "nes.css": "^2.2.1",
     "snes.css": "^1.0.1",
+    "tailwindcss": "^4.1.12",
     "ua-parser-js": "^2.0.4",
     "uaparser": "^0.0.2"
   },

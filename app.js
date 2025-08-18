@@ -17,16 +17,19 @@ app.use((req, res, next) => {
     req.headers["x-forwarded-for"]?.split(",")[0] || req.socket.remoteAddress;
     let ua = uap(req.headers['user-agent']);
     next(); // Pass control to the next middleware/route
-    fetch(process.env.NTFY, {
-        method: "POST",
-        headers: {
-            "Title": "Website",
-            "Priority": "high"
-        },
-        body: `${ip} - ${req.url} --- ${ua.browser["name"]} ${ua.browser["version"]} ${ua.os["name"]} ${ua.os["version"]}`
-    }).catch(err => {
-        console.error("Failed to send notification:", err);
-    });
+    if (ip != "127.0.0.1") {
+        
+        fetch(process.env.NTFY, {
+            method: "POST",
+            headers: {
+                "Title": "Website",
+                "Priority": "high"
+            },
+            body: `${ip} - ${req.url} --- ${ua.browser["name"]} ${ua.browser["version"]} ${ua.os["name"]} ${ua.os["version"]}`
+        }).catch(err => {
+            console.error("Failed to send notification:", err);
+        });
+    }
     console.log(`${ip} - ${req.url} --- ${ua.browser["name"]} ${ua.browser["version"]} ${ua.os["name"]} ${ua.os["version"]}` );
 });
 
@@ -187,14 +190,14 @@ app.use("/simplex", express.static("simplex"));
 
 
 // -- Files
-app.get('/theme.css', (req, res) => {
-    res.setHeader('Content-Type','text/css')
-    res.end(readfile("node_modules/snes.css/dist/snes.css"));
-});
-app.get('/styles.css', (req, res) => {
-    res.setHeader('Content-Type','text/css')
-    res.end(readfile("/styles.css"));
-});
+//app.get('/theme.css', (req, res) => {
+    //    res.setHeader('Content-Type','text/css')
+//    res.end(readfile("node_modules/snes.css/dist/snes.css"));
+//});
+//app.get('/styles.css', (req, res) => {
+    //    res.setHeader('Content-Type','text/css')
+//    res.end(readfile("/styles.css"));
+//});
 
 
 app.get('/checkDomain', (req, res) => {
