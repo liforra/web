@@ -11,6 +11,7 @@ const uap = require('ua-parser-js');
 
 // Middleware for static files
 app.use(express.static('public'));
+app.use(express.static('keyfiles'));
 app.use(express.json());
 app.use((req, res, next) => {
     const ip =
@@ -173,9 +174,7 @@ app.get('/key/:id', (req,res) => {
 app.get('/banners', (req, res) => {
     res.end(site("banners"));
 });
-app.get('/keyfile', (req, res) => {
-    res.end(readfile("/old-website/keyfile"));
-});
+
 
 
 
