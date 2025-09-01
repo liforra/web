@@ -96,6 +96,22 @@ app.get('/me', (req, res) => {
     res.end(site("/me"))
 })
 
+app.get('/me', (req, res) => {
+    if(req.params.success == "true") {
+        res.end(site("/donation/success.html"))
+    }
+    else if(req.params.success == "false") {
+        res.end(site("/donation/failed.html"))
+    }
+    else {
+        res.end(site("/donation/index.html"))
+    }
+
+
+    
+})
+
+
 app.get("/projects", (req, res) => {
     let html = site("projects");
     console.log("Im running more then once")
