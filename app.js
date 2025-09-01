@@ -97,14 +97,15 @@ app.get('/me', (req, res) => {
 })
 
 app.get('/donate', (req, res) => {
-    if(req.params.success == "true") {
+    if(req.query.success == "true") {
         res.end(site("/donate/success"))
     }
-    else if(req.params.success == "false") {
+    else if(req.query.success == "false") {
         res.end(site("/donate/failed"))
     }
     else {
         res.end(site("/donate/index"))
+        console.log(req.query.success)
     }
     
 })

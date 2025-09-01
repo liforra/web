@@ -171,3 +171,9 @@ body {
   object-fit: contain;
   image-rendering: pixelated; /* optional retro vibe */
 }
+.failure {
+  color:#ff0101
+}
+.success {
+  color:#1aff01
+}
