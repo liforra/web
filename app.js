@@ -98,13 +98,13 @@ app.get('/me', (req, res) => {
 
 app.get('/donate', (req, res) => {
     if(req.params.success == "true") {
-        res.end(site("/donate/success.html"))
+        res.end(site("/donate/success"))
     }
     else if(req.params.success == "false") {
-        res.end(site("/donate/failed.html"))
+        res.end(site("/donate/failed"))
     }
     else {
-        res.end(site("/donate/index.html"))
+        res.end(site("/donate/index"))
     }
     
 })
