@@ -96,7 +96,7 @@ app.get('/me', (req, res) => {
     res.end(site("/me"))
 })
 
-app.get('/me', (req, res) => {
+app.get('/donate', (req, res) => {
     if(req.params.success == "true") {
         res.end(site("/donate/success.html"))
     }
@@ -106,8 +106,6 @@ app.get('/me', (req, res) => {
     else {
         res.end(site("/donate/index.html"))
     }
-
-
     
 })
 
