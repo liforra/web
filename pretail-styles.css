@@ -177,3 +177,7 @@ body {
 .success {
   color:#1aff01
 }
+.notenc p {
+  color: #ff0101;
+  font-size: 0.1rem !important;
+}
