@@ -227,6 +227,7 @@ app.use("/assets/tor", express.static("assets/tor"));
 app.use("/keys", express.static("keys"));
 app.use("/assets/icons", express.static("assets/icons"));
 app.use("/simplex", express.static("simplex"));
+app.use("/.well-known", express.static(".well-known"));
 
 // -- Files
 //app.get('/theme.css', (req, res) => {
