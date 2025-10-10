@@ -7,7 +7,6 @@ const app = express();
 const port = process.env.PORT;
 const http = require("http");
 const uap = require("ua-parser-js");
-const fs = require("fs").promises;
 const path = require("path");
 
 // Middleware for static files
