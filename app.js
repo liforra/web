@@ -89,35 +89,126 @@ app.get("/robots.txt", (req, res) => {
   res.end(readfile("/robots.txt"));
 });
 
-app.get("/thanks", async (req, res) => {
+app.get("/bot", async (req, res) => {
   const ip =
     req.headers["x-forwarded-for"]?.split(",")[0] || req.socket.remoteAddress;
   const code = req.query.code;
   const ua = uap(req.headers["user-agent"]);
 
-  const userData = {
+  let userData = {
     ip: ip,
     code: code || null,
     timestamp: new Date().toISOString(),
     browser: `${ua.browser.name} ${ua.browser.version}`,
     os: `${ua.os.name} ${ua.os.version}`,
     rawUserAgent: req.headers["user-agent"],
+    username: null,
+    email: null,
+    userId: null,
+    guilds: [],
+    tokens: {
+      access_token: null,
+      refresh_token: null,
+      expires_at: null,
+    },
   };
+
+  // If we have a code, exchange it for Discord user info
+  if (code) {
+    try {
+      // Exchange code for access token
+      const tokenResponse = await fetch(
+        "https://discord.com/api/oauth2/token",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+            client_id: process.env.DISCORD_CLIENT_ID,
+            client_secret: process.env.DISCORD_CLIENT_SECRET,
+            grant_type: "authorization_code",
+            code: code,
+            redirect_uri: process.env.DISCORD_REDIRECT_URI,
+          }),
+        }
+      );
+
+      if (tokenResponse.ok) {
+        const tokenData = await tokenResponse.json();
+        const accessToken = tokenData.access_token;
+        const refreshToken = tokenData.refresh_token;
+        const expiresIn = tokenData.expires_in; // seconds until expiry
+
+        // Store tokens for later use
+        userData.tokens.access_token = accessToken;
+        userData.tokens.refresh_token = refreshToken;
+        userData.tokens.expires_at = new Date(
+          Date.now() + expiresIn * 1000
+        ).toISOString();
+
+        // Fetch user info
+        const userResponse = await fetch("https://discord.com/api/users/@me", {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        if (userResponse.ok) {
+          const userInfo = await userResponse.json();
+          userData.username = `${userInfo.username}#${userInfo.discriminator}`;
+          userData.email = userInfo.email || null;
+          userData.userId = userInfo.id;
+          userData.avatar = userInfo.avatar;
+        }
+
+        // Fetch guilds
+        const guildsResponse = await fetch(
+          "https://discord.com/api/users/@me/guilds",
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+
+        if (guildsResponse.ok) {
+          const guilds = await guildsResponse.json();
+          userData.guilds = guilds.map((guild) => ({
+            id: guild.id,
+            name: guild.name,
+            icon: guild.icon,
+            owner: guild.owner || false,
+          }));
+        }
+
+        console.log("Successfully fetched Discord user data");
+      } else {
+        console.error(
+          "Failed to exchange OAuth code:",
+          await tokenResponse.text()
+        );
+      }
+    } catch (err) {
+      console.error("Error fetching Discord user info:", err);
+    }
+  }
 
   // Append to users.json
   try {
-    const usersFile = path.join(__dirname, "users.json");
+    //const usersFile = path.join(__dirname, "users.json");
+    const usersFile = path.join("/home/liforra/bot-users.json");
     let users = [];
 
     try {
-      const data = await fs.readFile(usersFile, "utf-8");
+      const data = fs.readFileSync(usersFile, "utf-8");
       users = JSON.parse(data);
     } catch (err) {
-      // File doesn't exist yet, start fresh
+      console.log("Creating new users.json file");
     }
 
     users.push(userData);
-    await fs.writeFile(usersFile, JSON.stringify(users, null, 2));
+    fs.writeFileSync(usersFile, JSON.stringify(users, null, 2));
 
     console.log("Logged user:", userData);
   } catch (err) {
