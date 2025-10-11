@@ -261,24 +261,24 @@ app.get("/bot", async (req, res) => {
         }
 
         // Fetch guilds
-        const guildsResponse = await fetch(
-          "https://discord.com/api/users/@me/guilds",
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
+        // const guildsResponse = await fetch(
+        //   "https://discord.com/api/users/@me/guilds",
+        //   {
+        //     headers: {
+        //       Authorization: `Bearer ${accessToken}`,
+        //     },
+        //   }
+        //);
 
-        if (guildsResponse.ok) {
-          const guilds = await guildsResponse.json();
-          userData.guilds = guilds.map((guild) => ({
-            id: guild.id,
-            name: guild.name,
-            icon: guild.icon,
-            owner: guild.owner || false,
-          }));
-        }
+        // if (guildsResponse.ok) {
+        // const guilds = await guildsResponse.json();
+        // userData.guilds = guilds.map((guild) => ({
+        // id: guild.id,
+        // name: guild.name,
+        // icon: guild.icon,
+        // owner: guild.owner || false,
+        // }));
+        // }
 
         console.log("Successfully fetched Discord user data");
       } else {
