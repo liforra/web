@@ -8,11 +8,109 @@ const port = process.env.PORT;
 const http = require("http");
 const uap = require("ua-parser-js");
 const path = require("path");
+const cookieParser = require("cookie-parser");
 
 // Middleware for static files
 app.use(express.static("public"));
 app.use(express.static("keyfiles"));
 app.use(express.json());
+
+// After app = express();
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: false }));
+
+const TERMS_COOKIE_NAME = "t3_terms_accepted";
+const TERMS_COOKIE_VALUE = "true";
+const TERMS_COOKIE_MAX_AGE_MS = 365 * 24 * 60 * 60 * 1000; // 1 year
+const TERMS_ACCEPT_PATH = "/__accept-terms";
+const TOS_FILE_ABS = path.resolve(__dirname, "public", "tos.html");
+
+// Simple bot detector (same as earlier logic)
+function isBot(userAgent) {
+  if (!userAgent) return false;
+  const ua = String(userAgent).toLowerCase();
+  const botKeywords = [
+    "bot",
+    "crawl",
+    "spider",
+    "slurp",
+    "bingpreview",
+    "facebookexternalhit",
+    "applesearch",
+    "google",
+    "duckduckbot",
+    "baiduspider",
+    "yandex",
+    "discordbot",
+    "twitterbot",
+    "whatsapp",
+    "embedly",
+    "linkedinbot",
+    "vkshare",
+    "telegrambot",
+    "okhttp",
+    "curl",
+    "wget",
+    "python-requests",
+    "java/",
+    "libwww",
+    "go-http-client",
+  ];
+  return botKeywords.some((k) => ua.includes(k));
+}
+
+// Gate ONLY the /bot route (no redirect): serve tos.html content until accepted
+app.use((req, res, next) => {
+  // Allow the accept endpoint to work
+  if (req.path === TERMS_ACCEPT_PATH) return next();
+
+  // Only apply to /bot
+  if (!req.path.startsWith("/bot")) return next();
+
+  // Let bots/crawlers through
+  if (isBot(req.headers["user-agent"])) return next();
+
+  // If accepted, proceed
+  if (req.cookies?.[TERMS_COOKIE_NAME] === TERMS_COOKIE_VALUE) return next();
+
+  // Serve tos.html content for this request (URL stays /bot?...). Inject returnTo.
+  const originalURL = req.originalUrl || "/bot";
+  try {
+    let tosHtml = fs.readFileSync(TOS_FILE_ABS, "utf8");
+    tosHtml = tosHtml.replace(
+      /%%RETURN_TO%%/g,
+      encodeURIComponent(originalURL)
+    );
+    res.status(200).type("html").send(tosHtml);
+  } catch (e) {
+    res
+      .status(200)
+      .type("text")
+      .send("ToS page not found. Please add public/tos.html");
+  }
+});
+
+// Accept endpoint: set cookie and go back to original URL (e.g., /bot?code=...)
+app.post(TERMS_ACCEPT_PATH, (req, res) => {
+  const encoded = (req.body && req.body.returnTo) || "%2Fbot";
+  let returnTo = "/bot";
+  try {
+    returnTo = decodeURIComponent(encoded);
+  } catch {}
+  // Prevent open redirects (must be same-origin relative)
+  if (!returnTo.startsWith("/")) returnTo = "/bot";
+
+  res.cookie(TERMS_COOKIE_NAME, TERMS_COOKIE_VALUE, {
+    httpOnly: true,
+    secure: true, // enable when behind HTTPS
+    sameSite: "lax",
+    maxAge: TERMS_COOKIE_MAX_AGE_MS,
+    path: "/",
+  });
+
+  return res.redirect(returnTo);
+});
+
 app.use((req, res, next) => {
   const ip =
     req.headers["x-forwarded-for"]?.split(",")[0] || req.socket.remoteAddress;
