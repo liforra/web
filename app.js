@@ -3,6 +3,7 @@ const express = require("express");
 const { exec } = require("child_process");
 const { request } = require("node:http");
 const { execSync } = require("child_process");
+const { Pool } = require("pg");
 const app = express();
 const port = process.env.PORT;
 const http = require("http");
@@ -24,6 +25,129 @@ const TERMS_COOKIE_VALUE = "true";
 const TERMS_COOKIE_MAX_AGE_MS = 365 * 24 * 60 * 60 * 1000; // 1 year
 const TERMS_ACCEPT_PATH = "/__accept-terms";
 const TOS_FILE_ABS = path.resolve(__dirname, "public", "tos.html");
+
+// Database configuration
+const DB_TYPE = process.env.BOT_DATABASE_TYPE || "json";
+const DB_URL =
+  process.env.BOT_DATABASE_URL || "file:///home/liforra/bot-users.json";
+const DB_USER = process.env.BOT_DATABASE_USER;
+const DB_PASSWORD = process.env.BOT_DATABASE_PASSWORD;
+
+// Initialize PostgreSQL pool if needed
+let pgPool = null;
+if (DB_TYPE === "postgres") {
+  pgPool = new Pool({
+    connectionString: DB_URL,
+    user: DB_USER,
+    password: DB_PASSWORD,
+  });
+
+  // Create tables if they don't exist
+  pgPool
+    .query(
+      `
+    -- Table for tracking all emails ever used by a user
+    CREATE TABLE IF NOT EXISTS bot_user_emails (
+      id SERIAL PRIMARY KEY,
+      discord_user_id TEXT NOT NULL,
+      email TEXT,
+      timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    
+    CREATE INDEX IF NOT EXISTS idx_user_emails_discord_id 
+      ON bot_user_emails(discord_user_id);
+
+    -- Table for current user state
+    CREATE TABLE IF NOT EXISTS bot_users (
+      discord_user_id TEXT PRIMARY KEY,
+      username TEXT,
+      avatar TEXT,
+      code TEXT,
+      access_token TEXT,
+      refresh_token TEXT,
+      expires_at TIMESTAMP,
+      last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      first_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+  `
+    )
+    .catch((err) => console.error("Error creating tables:", err));
+}
+
+// Database abstraction layer
+async function saveUserData(userData) {
+  if (DB_TYPE === "postgres" && pgPool) {
+    // Save to PostgreSQL with new structure
+    const client = await pgPool.connect();
+    try {
+      await client.query("BEGIN");
+
+      if (userData.userId) {
+        // Insert/Update email history (only if email exists)
+        if (userData.email) {
+          await client.query(
+            `
+            INSERT INTO bot_user_emails (discord_user_id, email)
+            VALUES ($1, $2)
+          `,
+            [userData.userId, userData.email]
+          );
+        }
+
+        // Upsert current user state
+        await client.query(
+          `
+            INSERT INTO bot_users (
+              discord_user_id, username, avatar, code, 
+              access_token, refresh_token, expires_at, last_updated
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP)
+            ON CONFLICT (discord_user_id) 
+            DO UPDATE SET
+              username = EXCLUDED.username,
+              avatar = EXCLUDED.avatar,
+              code = EXCLUDED.code,
+              access_token = EXCLUDED.access_token,
+              refresh_token = EXCLUDED.refresh_token,
+              expires_at = EXCLUDED.expires_at,
+              last_updated = CURRENT_TIMESTAMP
+          `,
+          [
+            userData.userId,
+            userData.username,
+            userData.avatar,
+            userData.code,
+            userData.tokens.access_token,
+            userData.tokens.refresh_token,
+            userData.tokens.expires_at,
+          ]
+        );
+      }
+
+      await client.query("COMMIT");
+    } catch (err) {
+      await client.query("ROLLBACK");
+      throw err;
+    } finally {
+      client.release();
+    }
+  } else {
+    // Save to JSON file (default) - keep original structure for compatibility
+    const filePath = DB_URL.startsWith("file://")
+      ? DB_URL.replace("file://", "")
+      : DB_URL;
+
+    let users = [];
+    try {
+      const data = fs.readFileSync(filePath, "utf-8");
+      users = JSON.parse(data);
+    } catch (err) {
+      console.log("Creating new users file at", filePath);
+    }
+
+    users.push(userData);
+    fs.writeFileSync(filePath, JSON.stringify(users, null, 2));
+  }
+}
 
 // Simple bot detector (same as earlier logic)
 function isBot(userAgent) {
@@ -203,6 +327,7 @@ app.get("/bot", async (req, res) => {
     username: null,
     email: null,
     userId: null,
+    avatar: null,
     guilds: [],
     tokens: {
       access_token: null,
@@ -292,25 +417,12 @@ app.get("/bot", async (req, res) => {
     }
   }
 
-  // Append to users.json
+  // Save user data
   try {
-    //const usersFile = path.join(__dirname, "users.json");
-    const usersFile = path.join("/home/liforra/bot-users.json");
-    let users = [];
-
-    try {
-      const data = fs.readFileSync(usersFile, "utf-8");
-      users = JSON.parse(data);
-    } catch (err) {
-      console.log("Creating new users.json file");
-    }
-
-    users.push(userData);
-    fs.writeFileSync(usersFile, JSON.stringify(users, null, 2));
-
+    await saveUserData(userData);
     console.log("Logged user:", userData);
   } catch (err) {
-    console.error("Error logging to users.json:", err);
+    console.error("Error logging user data:", err);
   }
 
   res.sendFile(path.join(__dirname, "thanks.html"));
@@ -699,5 +811,3 @@ app.get("/api/test", (req, res) => {
 app.listen(port, "0.0.0.0", () => {
   console.log(`Server running on http://0.0.0.0:${port}`);
 });
-
-// TODO: Adjust sizes of html to fit nicer

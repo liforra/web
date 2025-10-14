@@ -16,6 +16,7 @@
     "cookie-parser": "^1.4.7",
     "express": "^5.1.0",
     "nes.css": "^2.2.1",
+    "pg": "^8.16.3",
     "snes.css": "^1.0.1",
     "tailwindcss": "^4.1.12",
     "ua-parser-js": "^2.0.4",
