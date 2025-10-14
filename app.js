@@ -679,7 +679,7 @@ app.get("/vault", (req, res) => {
   if (req.header("Host") == "liforra.de") {
     res.setHeader("Location", "https://v.liforra.de");
   } else if (
-    req.header("Host") ==r
+    req.header("Host") ==
     "ekbyky7ey2d7arb7q6uctyaf4vhb72zlcpsdokmscsdpe6vvwcrrtkid.onion"
   ) {
     res.setHeader(
