@@ -1,5 +1,3 @@
-// No need for dotenv if your runscript handles it, but it doesn't hurt.
-require("dotenv").config({ path: "prod.env" });
 const fs = require("node:fs");
 const express = require("express");
 const { exec } = require("child_process");
