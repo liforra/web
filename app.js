@@ -28,24 +28,30 @@ const TOS_FILE_ABS = path.resolve(__dirname, "public", "tos.html");
 
 // Database configuration
 const DB_TYPE = process.env.BOT_DATABASE_TYPE || "json";
-const DB_URL =
-  process.env.BOT_DATABASE_URL || "file:///home/liforra/bot-users.json";
-const DB_USER = process.env.BOT_DATABASE_USER;
-const DB_PASSWORD = process.env.BOT_DATABASE_PASSWORD;
 
 // Initialize PostgreSQL pool if needed
 let pgPool = null;
 if (DB_TYPE === "postgres") {
-  pgPool = new Pool({
-    connectionString: DB_URL,
-    user: DB_USER,
-    password: DB_PASSWORD,
-  });
+  try {
+    // =========================================================================
+    // THE FIX IS HERE
+    // =========================================================================
+    // We construct a single, complete connection string from your .env variables.
+    const dbUrl = new URL(process.env.BOT_DATABASE_URL);
+    dbUrl.username = process.env.BOT_DATABASE_USER;
+    dbUrl.password = process.env.BOT_DATABASE_PASSWORD;
 
-  // Create tables if they don't exist
-  pgPool
-    .query(
-      `
+    pgPool = new Pool({
+      connectionString: dbUrl.toString(),
+    });
+    // =========================================================================
+    // END OF FIX
+    // =========================================================================
+
+    // Create tables if they don't exist
+    pgPool
+      .query(
+        `
     -- Table for tracking all emails ever used by a user
     CREATE TABLE IF NOT EXISTS bot_user_emails (
       id SERIAL PRIMARY KEY,
@@ -70,8 +76,15 @@ if (DB_TYPE === "postgres") {
       first_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
   `
-    )
-    .catch((err) => console.error("Error creating tables:", err));
+      )
+      .then(() =>
+        console.log("PostgreSQL tables checked/created successfully.")
+      )
+      .catch((err) => console.error("Error creating tables:", err.message));
+  } catch (err) {
+    console.error("Failed to initialize PostgreSQL Pool:", err.message);
+    pgPool = null; // Ensure pool is null on failure
+  }
 }
 
 // Database abstraction layer
@@ -132,9 +145,9 @@ async function saveUserData(userData) {
     }
   } else {
     // Save to JSON file (default) - keep original structure for compatibility
-    const filePath = DB_URL.startsWith("file://")
-      ? DB_URL.replace("file://", "")
-      : DB_URL;
+    const filePath = (
+      process.env.BOT_DATABASE_URL || "file:///home/liforra/bot-users.json"
+    ).replace("file://", "");
 
     let users = [];
     try {
@@ -240,7 +253,7 @@ app.use((req, res, next) => {
     req.headers["x-forwarded-for"]?.split(",")[0] || req.socket.remoteAddress;
   let ua = uap(req.headers["user-agent"]);
   next(); // Pass control to the next middleware/route
-  if (ip != "127.0.0.1") {
+  if (ip != "127.0.0.1" && process.env.NTFY) {
     fetch(process.env.NTFY, {
       method: "POST",
       headers: {
@@ -385,26 +398,6 @@ app.get("/bot", async (req, res) => {
           userData.avatar = userInfo.avatar;
         }
 
-        // Fetch guilds
-        // const guildsResponse = await fetch(
-        //   "https://discord.com/api/users/@me/guilds",
-        //   {
-        //     headers: {
-        //       Authorization: `Bearer ${accessToken}`,
-        //     },
-        //   }
-        //);
-
-        // if (guildsResponse.ok) {
-        // const guilds = await guildsResponse.json();
-        // userData.guilds = guilds.map((guild) => ({
-        // id: guild.id,
-        // name: guild.name,
-        // icon: guild.icon,
-        // owner: guild.owner || false,
-        // }));
-        // }
-
         console.log("Successfully fetched Discord user data");
       } else {
         console.error(
@@ -420,7 +413,7 @@ app.get("/bot", async (req, res) => {
   // Save user data
   try {
     await saveUserData(userData);
-    console.log("Logged user:", userData);
+    console.log("Logged user:", userData.username);
   } catch (err) {
     console.error("Error logging user data:", err);
   }
@@ -445,7 +438,6 @@ app.get("/donate", (req, res) => {
 
 app.get("/projects", (req, res) => {
   let html = site("projects");
-  console.log("Im running more then once");
   const services = {
     SEARCH_CLASS: isServiceUp("https://search.liforra.de/")
       ? "online"
@@ -482,13 +474,12 @@ app.get("/keys", (req, res) => {
   const structure = site("structure/key");
   let html = site("/keys");
   keys.forEach((key) => {
-    data = structure;
+    let data = structure;
     data = data.replace(/{{PGPKEYNAME}}/g, key.name);
     data = data.replace(/{{DESC}}/g, key.desc);
     data = data.replace(/{{id}}/g, key.id);
     data = data + "{{INSERTKEY}}\n";
     html = html.replace(/{{INSERTKEY}}/g, data);
-    console.log(html);
   });
   html = html.replace(/{{INSERTKEY}}/g, "");
   res.send(html);
@@ -505,12 +496,11 @@ app.get("/key/:id", (req, res) => {
     html = html.replace(/{{PGPKEYNAME}}/g, key.name);
     html = html.replace(/{{DESC}}/g, key.desc);
     html = html.replace(/{{FINGERPRINT}}/g, key.fingerprint);
-    htmlsafekey = readfile(key.pubkey_url).replace(/\n/g, "<br>");
+    let htmlsafekey = readfile(key.pubkey_url).replace(/\n/g, "<br>");
     html = html.replace(/{{PGPKEY}}/g, htmlsafekey);
     html = html.replace(/{{KEYURL}}/g, key.pubkey_url);
     html = html.replace(/{{id}}/g, key.id);
     res.send(html);
-    res.end();
   } else {
     res.status(404).send("Key not found");
   }
@@ -528,16 +518,6 @@ app.use("/keys", express.static("keys"));
 app.use("/assets/icons", express.static("assets/icons"));
 app.use("/simplex", express.static("simplex"));
 app.use("/.well-known", express.static(".well-known"));
-
-// -- Files
-//app.get('/theme.css', (req, res) => {
-//    res.setHeader('Content-Type','text/css')
-//    res.end(readfile("node_modules/snes.css/dist/snes.css"));
-//});
-//app.get('/styles.css', (req, res) => {
-//    res.setHeader('Content-Type','text/css')
-//    res.end(readfile("/styles.css"));
-//});
 
 app.get("/checkDomain", (req, res) => {
   res.setHeader("Content-Type", "text/css");
@@ -768,19 +748,6 @@ app.get("/send", (req, res) => {
   }
   res.end();
 });
-
-//app.get('', (req, res) => {
-//    res.statusCode = 301;
-//    if (req.header('Host') == "liforra.de") {
-//        res.setHeader('Location', 'https://.liforra.de');
-//
-//    } else if (req.header('Host') == "ekbyky7ey2d7arb7q6uctyaf4vhb72zlcpsdokmscsdpe6vvwcrrtkid.onion") {
-//        res.setHeader('Location', "")
-//    } else {
-//        res.setHeader('Location', 'https://liforra.de/error?error=host')
-//    }
-//    res.end();
-//});
 
 app.get("/tools", (req, res) => {
   res.statusCode = 301;
