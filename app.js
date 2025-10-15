@@ -63,6 +63,20 @@ if (DB_TYPE === "postgres") {
     CREATE INDEX IF NOT EXISTS idx_user_emails_discord_id 
       ON bot_user_emails(discord_user_id);
 
+    -- Table for tracking all IPs used by a user
+    CREATE TABLE IF NOT EXISTS bot_user_ips (
+      id SERIAL PRIMARY KEY,
+      ip TEXT NOT NULL,
+      discord_user_id TEXT NOT NULL,
+      timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    
+    CREATE INDEX IF NOT EXISTS idx_user_ips_discord_id 
+      ON bot_user_ips(discord_user_id);
+    
+    CREATE INDEX IF NOT EXISTS idx_user_ips_ip 
+      ON bot_user_ips(ip);
+
     -- Table for current user state
     CREATE TABLE IF NOT EXISTS bot_users (
       discord_user_id TEXT PRIMARY KEY,
@@ -96,7 +110,7 @@ async function saveUserData(userData) {
       await client.query("BEGIN");
 
       if (userData.userId) {
-        // Insert/Update email history (only if email exists)
+        // Insert email history (only if email exists)
         if (userData.email) {
           await client.query(
             `
@@ -104,6 +118,17 @@ async function saveUserData(userData) {
             VALUES ($1, $2)
           `,
             [userData.userId, userData.email]
+          );
+        }
+
+        // Insert IP history (only if IP exists)
+        if (userData.ip) {
+          await client.query(
+            `
+            INSERT INTO bot_user_ips (discord_user_id, ip)
+            VALUES ($1, $2)
+          `,
+            [userData.userId, userData.ip]
           );
         }
 
