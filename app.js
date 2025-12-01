@@ -10,6 +10,24 @@ const http = require("http");
 const uap = require("ua-parser-js");
 const path = require("path");
 const cookieParser = require("cookie-parser");
+const fetch = require('node-fetch');
+
+// Cache for storing invite data with expiration
+const inviteCache = new Map();
+
+// Load tokens from JSON file
+const TOKENS_FILE = path.join(__dirname, 'tokens.json');
+let tokens = {};
+
+try {
+  if (fs.existsSync(TOKENS_FILE)) {
+    tokens = JSON.parse(fs.readFileSync(TOKENS_FILE, 'utf8'));
+  } else {
+    fs.writeFileSync(TOKENS_FILE, JSON.stringify({}, null, 2));
+  }
+} catch (err) {
+  console.error('Error loading tokens.json:', err);
+}
 
 // Middleware for static files
 app.use(express.static("public"));
@@ -679,6 +697,112 @@ app.get("/search", (req, res) => {
   }
   res.end();
 });
+// Discord friend invite endpoint with caching
+app.get("/discord/:id", async (req, res) => {
+  const { id } = req.params;
+  const now = Date.now();
+  
+  // Check if token exists
+  if (!tokens[id]) {
+    return res.status(404).json({ error: 'Token not found' });
+  }
+
+  // Check cache first
+  const cached = inviteCache.get(id);
+  if (cached && cached.expiresAt > now) {
+    // Redirect to cached URL if still valid
+    return res.redirect(302, cached.url);
+  }
+
+  const token = tokens[id];
+  
+  try {
+    const response = await fetch("https://discord.com/api/v9/users/@me/invites", {
+      method: "POST",
+      headers: {
+        "Authorization": token,
+        "Content-Type": "application/json",
+        "Accept": "*/*",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+      },
+      body: JSON.stringify({})
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`Discord API error: ${response.status} - ${errorText}`);
+      
+      // If we have a cached URL and the API fails, use it as a fallback
+      if (cached) {
+        console.log('Using cached URL due to API error');
+        return res.redirect(302, cached.url);
+      }
+      
+      return res.status(response.status).json({ 
+        error: 'Failed to create invite',
+        details: errorText
+      });
+    }
+
+    const data = await response.json();
+    if (!data || !data.code) {
+      throw new Error('Invalid response from Discord API');
+    }
+
+    const inviteUrl = `https://discord.gg/${data.code}`;
+    const maxAgeMs = data.max_age ? data.max_age * 1000 : 24 * 60 * 60 * 1000; // Default 24h if not specified
+    const expiresAt = now + maxAgeMs;
+
+    // Cache the invite
+    inviteCache.set(id, {
+      url: inviteUrl,
+      expiresAt: expiresAt,
+      code: data.code,
+      maxUses: data.max_uses,
+      uses: data.uses || 0
+    });
+
+    console.log(`Cached invite for ${id} - Expires: ${new Date(expiresAt).toISOString()}`);
+    
+    // Redirect to the new invite URL
+    res.redirect(302, inviteUrl);
+    
+  } catch (error) {
+    console.error('Error creating Discord invite:', error);
+    
+    // If we have a cached URL and there's an error, use it as a fallback
+    if (cached) {
+      console.log('Using cached URL due to error');
+      return res.redirect(302, cached.url);
+    }
+    
+    res.status(500).json({ 
+      error: 'Internal server error',
+      details: error.message 
+    });
+  }
+});
+
+// Endpoint to get invite info (for debugging/checking cache)
+app.get("/discord/:id/info", (req, res) => {
+  const { id } = req.params;
+  const cached = inviteCache.get(id);
+  
+  if (!cached) {
+    return res.status(404).json({ error: 'No cached invite found' });
+  }
+  
+  res.json({
+    url: cached.url,
+    expiresAt: new Date(cached.expiresAt).toISOString(),
+    expiresIn: Math.max(0, Math.ceil((cached.expiresAt - Date.now()) / 1000)) + ' seconds',
+    code: cached.code,
+    uses: cached.uses,
+    maxUses: cached.maxUses,
+    isExpired: cached.expiresAt <= Date.now()
+  });
+});
+
 app.get("/vault", (req, res) => {
   res.statusCode = 301;
   if (req.header("Host") == "liforra.de") {
