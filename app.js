@@ -924,7 +924,7 @@ app.get("/awo/glpi/config.toml", (req, res) => {
     res.end(readfile("/awo/liforra.toml"))
 });
 
-eff0ec899ceaa71f448b1dae76aaa0bd22691b385e3ab14f70c738416f9092a2
+
 // -- API ---
 app.post("/updatesite", (req, res) => {
   exec("git pull", (err, stdout, stderr) => {
