@@ -913,10 +913,31 @@ function sha256(text) {
   return crypto.createHash("sha256").update(text).digest("hex");
 }
 
-app.get("/awo/glpi/glpi.exe", (req, res) => {
-  
-  
+app.get("/awo/glpi/glpi.exe", async (req, res) => {
+  try {
+    // Get latest release info from GitHub API
+    const apiRes = await fetch("https://api.github.com/repos/liforra/glpi-tool/releases/latest");
+    if (!apiRes.ok) throw new Error("Failed to fetch release info");
+    const release = await apiRes.json();
+
+    // Find the .exe asset
+    const exe = release.assets.find(a => a.name.toLowerCase().endsWith(".exe"));
+    if (!exe) return res.status(404).send("No .exe found");
+
+    // Stream the .exe to the client
+    const assetRes = await fetch(exe.browser_download_url);
+    if (!assetRes.ok) throw new Error("Failed to download asset");
+
+    res.setHeader("Content-Disposition", `attachment; filename="${exe.name}"`);
+    res.setHeader("Content-Type", "application/octet-stream");
+
+    assetRes.body.pipe(res);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error downloading GLPI tool");
+  }
 });
+
 app.get("/awo/glpi/config.toml", (req, res) => {
   if (sha256(req.query.password) == "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")
     res.end(readfile("/awo/config.toml"))
