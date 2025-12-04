@@ -11,6 +11,8 @@ const uap = require("ua-parser-js");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const fetch = require('node-fetch');
+const crypto = require('crypto');
+
 
 // Cache for storing invite data with expiration
 const inviteCache = new Map();
@@ -904,6 +906,25 @@ app.get("/tools", (req, res) => {
   res.end();
 });
 
+
+// -- AWO --
+
+function sha256(text) {
+  return crypto.createHash("sha256").update(text).digest("hex");
+}
+
+app.get("/awo/glpi/glpi.exe", (req, res) => {
+  
+  
+});
+app.get("/awo/glpi/config.toml", (req, res) => {
+  if (sha256(req.query.password) == "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")
+    res.end(readfile("/awo/config.toml"))
+  else if (sha256(req.query.password) == "eff0ec899ceaa71f448b1dae76aaa0bd22691b385e3ab14f70c738416f9092a2")
+    res.end(readfile("/awo/liforra.toml"))
+});
+
+eff0ec899ceaa71f448b1dae76aaa0bd22691b385e3ab14f70c738416f9092a2
 // -- API ---
 app.post("/updatesite", (req, res) => {
   exec("git pull", (err, stdout, stderr) => {
