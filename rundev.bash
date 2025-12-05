@@ -1,11 +1,18 @@
 #!/usr/bin/env bash
-eval export $(cat dev.env)
 
+# Export environment variables safely
+set -o allexport
+source dev.env
+set +o allexport
+
+# Start Tailwind in the background
 npx @tailwindcss/cli -i ./pretail-styles.css -o ./public/styles.css --watch --minify &
+
 echo "Hi"
 
-if whereis nodemon; then
-	nodemon ./app.js
+# Run app.js with nodemon if available, fallback to node
+if command -v nodemon >/dev/null 2>&1; then
+    nodemon ./app.js
 else
-	node ./app.js
+    node ./app.js
 fi
