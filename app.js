@@ -956,7 +956,7 @@ app.get("/awo/glpi/config.toml", (req, res) => {
 });
 
 const AdmZip = require("adm-zip");
-const fetch = require("node-fetch");
+
 
 app.get("/awo/glpi", async (req, res) => {
   try {
