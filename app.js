@@ -914,7 +914,7 @@ function sha256(text) {
 }
 // Maps SHA256 hashes -> config file paths
 const CONFIG_MAP = {
-  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855": "/awo/config.toml",
+  "a9253dc8529dd214e5f22397888e78d3390daa47593e26f68c18f97fd7a3876b": "/awo/config.toml",
   "eff0ec899ceaa71f448b1dae76aaa0bd22691b385e3ab14f70c738416f9092a2": "/awo/liforra.toml"
 };
 
