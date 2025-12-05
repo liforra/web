@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=100rem, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+    />
+    <title>Document</title>
+    <style>
+      .main {
+        padding: 0.5rem;
+        margin-left: 50vh;
+        margin-right: 50vh;
+        margin-top: 1rem;
+      }
+      h1 {
+        font-size: xx-large;
+      }
+      .checkbox {
+        margin-bottom: 0.7rem;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      function showPw() {
+        var x = document.getElementById("passwordField");
+        if (x.type === "password") {
+          x.type = "text";
+        } else {
+          x.type = "password";
+        }
+      }
+    </script>
+    <div class="main">
+      <h1>Passwort eingeben</h1>
+      <p>
+        Aufgrund Sicherheitsrisiken kann die konfiguration dieses Programmes nur
+        heuruntergeladen werden, wenn das richtige Passwort eingegeben wird.
+        Wenn Sie diesen Link zugesendet bekommen haben, können Sie das Passwort
+        erraten, da Sie das Passwort bereits kennen. Falls Sie jedoch schon eine config haben, einfach <a href="/awo/glpi/glpi.exe">Hier klicken</a>
+      </p>
+      <form action="/awo/glpi" method="GET">
+        <input type="password" name="password" id="passwordField" hint="" />
+        <input type="checkbox" id="showpw" onclick="showPw()" class="checkbox" /><label
+          for="showpw"
+          class="checkbox"
+          >Show Password</label
+        >
+        <input type="submit">
+      </form>
+    </div>
+  </body>
+</html>
