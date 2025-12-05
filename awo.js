@@ -1,7 +1,6 @@
 const crypto = require("crypto");
 const fetch = require("node-fetch");
 const AdmZip = require("adm-zip");
-const { readfile } = require('./app'); // Add this to the top of awo.js
 
 function sha256(text) {
   return crypto.createHash("sha256").update(text).digest("hex");
@@ -13,20 +12,14 @@ const CONFIG_MAP = {
   "eff0ec899ceaa71f448b1dae76aaa0bd22691b385e3ab14f70c738416f9092a2": "/awo/liforra.toml"
 };
 
-// Helper function to read files (replace with actual file reading logic)
-function readfile(filePath) {
-  // Assuming a function that reads the file and returns the content
-  return "File content of " + filePath;
-}
-
-// Fetch latest release info from GitHub
+// Fetch the latest release info from GitHub
 async function fetchLatestRelease() {
   const apiRes = await fetch("https://api.github.com/repos/liforra/glpi-tool/releases/latest");
   if (!apiRes.ok) throw new Error("Failed to fetch release info");
   return await apiRes.json();
 }
 
-// /awo/glpi/glpi.exe
+// -- AWO GLPI EXE --
 module.exports.glpiExe = async (req, res) => {
   try {
     const release = await fetchLatestRelease();
@@ -46,7 +39,7 @@ module.exports.glpiExe = async (req, res) => {
   }
 };
 
-// /awo/glpi/glpi.exe/hash
+// -- AWO GLPI EXE HASH --
 module.exports.glpiExeHash = async (req, res) => {
   try {
     const release = await fetchLatestRelease();
@@ -65,8 +58,8 @@ module.exports.glpiExeHash = async (req, res) => {
   }
 };
 
-// /awo/glpi/config.toml
-module.exports.configToml = (req, res) => {
+// -- AWO GLPI CONFIG TOML --
+module.exports.configToml = (req, res, readfile) => {
   const hash = sha256(req.query.password || "");
   const filePath = CONFIG_MAP[hash];
   if (!filePath) return res.status(403).send("Invalid password");
@@ -74,8 +67,8 @@ module.exports.configToml = (req, res) => {
   res.end(readfile(filePath));
 };
 
-// /awo/glpi/config.toml/hash
-module.exports.configTomlHash = (req, res) => {
+// -- AWO GLPI CONFIG TOML HASH --
+module.exports.configTomlHash = (req, res, readfile) => {
   const hash = sha256(req.query.password || "");
   const filePath = CONFIG_MAP[hash];
   if (!filePath) return res.status(403).send("Invalid password");
@@ -85,12 +78,16 @@ module.exports.configTomlHash = (req, res) => {
   res.send(hashOfConfig);
 };
 
-// /awo/glpi
-module.exports.glpi = async (req, res) => {
+// -- AWO GLPI --
+module.exports.glpi = async (req, res, readfile) => {
   try {
     const password = req.query.password || "";
-    const hash = sha256(password);
+    if (!password) {
+      // Serve the glpi.html page when no password is provided
+      return res.sendFile(__dirname + "/glpi.html");
+    }
 
+    const hash = sha256(password);
     const configPath = CONFIG_MAP[hash];
     if (!configPath) return res.status(403).send("Invalid password");
 
@@ -121,8 +118,8 @@ module.exports.glpi = async (req, res) => {
   }
 };
 
-// /awo/glpi/hash
-module.exports.glpiHash = async (req, res) => {
+// -- AWO GLPI HASH --
+module.exports.glpiHash = async (req, res, readfile) => {
   try {
     const password = req.query.password || "";
     const hash = sha256(password);
@@ -153,5 +150,16 @@ module.exports.glpiHash = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send("Error calculating GLPI zip hash");
+  }
+};
+
+// -- AWO VERSION --
+module.exports.version = async (req, res) => {
+  try {
+    const release = await fetchLatestRelease();
+    res.send(release.tag_name); // Sending the version as the tag name of the latest release
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error fetching version");
   }
 };
