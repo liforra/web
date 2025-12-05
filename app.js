@@ -12,7 +12,6 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const fetch = require('node-fetch');
 const crypto = require('crypto');
-const toml = require("toml");
 
 
 // Cache for storing invite data with expiration
@@ -337,6 +336,9 @@ function readfile(path) {
     throw error;
   }
 }
+
+module.exports.readfile = readfile; // Add this to app.js
+
 function isServiceUp(url) {
   try {
     execSync(`curl -Is --max-time 5 ${url} | head -n 1 | grep "200"`, {
@@ -914,16 +916,89 @@ function sha256(text) {
   return crypto.createHash("sha256").update(text).digest("hex");
 }
 // Maps SHA256 hashes -> config file paths
-// app.js
+const CONFIG_MAP = {
+  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855": "/awo/config.toml",
+  "eff0ec899ceaa71f448b1dae76aaa0bd22691b385e3ab14f70c738416f9092a2": "/awo/liforra.toml"
+};
 
-const awoRoutes = require("./awo"); // Import the awo.js file
+app.get("/awo/glpi/glpi.exe", async (req, res) => {
+  try {
+    // Get latest release info from GitHub API
+    const apiRes = await fetch("https://api.github.com/repos/liforra/glpi-tool/releases/latest");
+    if (!apiRes.ok) throw new Error("Failed to fetch release info");
+    const release = await apiRes.json();
 
-// Use the routes from awo.js
-app.use("/awo", awoRoutes);
+    // Find the .exe asset
+    const exe = release.assets.find(a => a.name.toLowerCase().endsWith(".exe"));
+    if (!exe) return res.status(404).send("No .exe found");
 
-// Optionally, you can serve static files, handle other endpoints, or perform other tasks
+    // Stream the .exe to the client
+    const assetRes = await fetch(exe.browser_download_url);
+    if (!assetRes.ok) throw new Error("Failed to download asset");
 
-// Start the server
+    res.setHeader("Content-Disposition", `attachment; filename="${exe.name}"`);
+    res.setHeader("Content-Type", "application/octet-stream");
+
+    assetRes.body.pipe(res);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error downloading GLPI tool");
+  }
+});
+
+app.get("/awo/glpi/config.toml", (req, res) => {
+  const hash = sha256(req.query.password || "");
+
+  const filePath = CONFIG_MAP[hash];
+  if (!filePath) return res.status(403).send("Invalid password");
+
+  res.end(readfile(filePath));
+});
+
+const AdmZip = require("adm-zip");
+const fetch = require("node-fetch");
+
+app.get("/awo/glpi", async (req, res) => {
+  try {
+    const password = req.query.password || "";
+    const hash = sha256(password);
+
+    // Determine config file path from dictionary
+    const configPath = CONFIG_MAP[hash];
+    if (!configPath) return res.status(403).send("Invalid password");
+
+    const configContent = readfile(configPath);
+
+    // Fetch latest release
+    const apiRes = await fetch("https://api.github.com/repos/liforra/glpi-tool/releases/latest");
+    if (!apiRes.ok) throw new Error("Failed to fetch GitHub release info");
+    const release = await apiRes.json();
+
+    const exe = release.assets.find(a => a.name.toLowerCase().endsWith(".exe"));
+    if (!exe) return res.status(404).send("No .exe found");
+
+    const assetRes = await fetch(exe.browser_download_url);
+    if (!assetRes.ok) throw new Error("Failed to download .exe");
+
+    const exeBuffer = Buffer.from(await assetRes.arrayBuffer());
+
+    // ZIP it
+    const zip = new AdmZip();
+    zip.addFile(exe.name, exeBuffer);
+    zip.addFile("config.toml", Buffer.from(configContent));
+
+    const zipBuffer = zip.toBuffer();
+
+    res.setHeader("Content-Type", "application/zip");
+    res.setHeader("Content-Disposition", "attachment; filename=glpi-package.zip");
+    res.end(zipBuffer);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error bundling GLPI files");
+  }
+});
+
 
 
 // -- API ---
