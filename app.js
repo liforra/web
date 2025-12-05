@@ -962,7 +962,7 @@ app.get("/awo/glpi", async (req, res) => {
     // ---- NEW BEHAVIOR ----
     if (!password) {
       // Serve the HTML page instead
-      return res.sendFile("/awo/glpi.html", { root: __dirname });
+      return res.sendFile("/glpi.html", { root: __dirname });
     }
     // ----------------------
 
