@@ -12,6 +12,7 @@
   "type": "commonjs",
   "dependencies": {
     "@tailwindcss/cli": "^4.1.12",
+    "adm-zip": "^0.5.16",
     "anubis": "^2.0.0",
     "cookie-parser": "^1.4.7",
     "express": "^5.1.0",
