@@ -473,6 +473,79 @@ app.get("/me", (req, res) => {
   res.end(site("/me"));
 });
 
+app.get("/socials", (req, res) => {
+  let html = site("/socials");
+  const structure = site("structure/social");
+  let socials;
+  try {
+    socials = JSON.parse(readfile("socials/socials.json"));
+  } catch (e) {
+    return res.status(500).send("Failed to load socials");
+  }
+
+  function darkenHex(hex, factor) {
+    if (!hex) return "#4fd1c5";
+    let h = String(hex).trim();
+    if (h.startsWith("#")) h = h.slice(1);
+    if (h.length === 3) h = h.split("").map((c) => c + c).join("");
+    const r = Math.max(0, Math.min(255, Math.round(parseInt(h.slice(0, 2), 16) * factor)));
+    const g = Math.max(0, Math.min(255, Math.round(parseInt(h.slice(2, 4), 16) * factor)));
+    const b = Math.max(0, Math.min(255, Math.round(parseInt(h.slice(4, 6), 16) * factor)));
+    const toHex = (n) => n.toString(16).padStart(2, "0");
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+  }
+
+  function hexToRgb(hex) {
+    let h = String(hex).trim();
+    if (h.startsWith("#")) h = h.slice(1);
+    if (h.length === 3) h = h.split("").map((c) => c + c).join("");
+    return {
+      r: parseInt(h.slice(0, 2), 16),
+      g: parseInt(h.slice(2, 4), 16),
+      b: parseInt(h.slice(4, 6), 16),
+    };
+  }
+
+  function blendHex(base, accent, accentRatio) {
+    const a = hexToRgb(accent);
+    const b = hexToRgb(base);
+    const r = Math.round(b.r * (1 - accentRatio) + a.r * accentRatio);
+    const g = Math.round(b.g * (1 - accentRatio) + a.g * accentRatio);
+    const bl = Math.round(b.b * (1 - accentRatio) + a.b * accentRatio);
+    const toHex = (n) => n.toString(16).padStart(2, "0");
+    return `#${toHex(r)}${toHex(g)}${toHex(bl)}`;
+  }
+
+  const BASE_BG = "#301a4a"; // matches .main-container background
+
+  const active = socials.filter((s) => s.status !== "inactive");
+  const inactive = socials.filter((s) => s.status === "inactive");
+
+  const render = (arr) =>
+    arr
+      .map((s) =>
+        structure
+          .replace(/{{URL}}/g, s.url || "#")
+          .replace(/{{ICON}}/g, s.icon || "")
+          .replace(/{{NAME}}/g, s.name || "")
+          .replace(/{{USERNAME}}/g, s.username || "")
+          .replace(/{{DESCRIPTION}}/g, s.description || "")
+          .replace(
+            /{{COLOR}}/g,
+            darkenHex(
+              blendHex(BASE_BG, s.color || "#4fd1c5", 0.35),
+              0.85
+            )
+          )
+          .replace(/{{STATUS_CLASS}}/g, s.status === "inactive" ? "inactive" : "")
+      )
+      .join("");
+
+  const allSocialsHtml = render(active) + render(inactive);
+  html = html.replace("{{INSERTSOCIALS}}", allSocialsHtml);
+  res.type("html").send(html);
+});
+
 app.get("/donate", (req, res) => {
   if (req.query.success == "true") {
     res.end(site("/donate/success"));

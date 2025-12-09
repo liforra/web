@@ -1,0 +1,155 @@
+[
+  {
+    "name": "SimpleXChat",
+    "url": "https://liforra.de/simplexchat",
+    "icon": "/assets/icons/simplex.svg",
+    "username": "Liforra",
+    "status": "active",
+    "color": "#00d9ff",
+    "description": ""
+  },
+  {
+    "name": "Signal",
+    "url": "https://liforra.de/signal",
+    "icon": "/assets/icons/signal.svg",
+    "username": "@liforra.01",
+    "status": "active",
+    "color": "#3a76f0",
+    "description": ""
+  },
+  {
+    "name": "Matrix",
+    "url": "https://liforra.de/matrix",
+    "icon": "/assets/icons/matrix.svg",
+    "username": "@liforra:beeper.com",
+    "status": "active",
+    "color": "#00b572",
+    "description": ""
+  },
+  {
+    "name": "Discord",
+    "url": "https://liforra.de/discord",
+    "icon": "/assets/icons/discord.svg",
+    "username": "@liforra",
+    "status": "inactive",
+    "color": "#5865f2",
+    "description": "Permanently banned"
+  },
+  {
+    "name": "Discord",
+    "url": "https://liforra.de/discord/1",
+    "icon": "/assets/icons/discord.svg",
+    "username": "@liforra1",
+    "status": "active",
+    "color": "#5865f2",
+    "description": ""
+  },
+  {
+    "name": "Pronouns.page",
+    "url": "https://en.pronouns.page/@Liforra",
+    "icon": "https://en.pronouns.page/favicon.ico",
+    "username": "@Liforra",
+    "status": "active",
+    "color": "#00b3ff",
+    "description": ""
+  },
+  {
+    "name": "Reddit",
+    "url": "https://www.reddit.com/user/Shwooshy1/",
+    "icon": "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/reddit.svg",
+    "username": "u/Shwooshy1",
+    "status": "active",
+    "color": "#FF4500",
+    "description": ""
+  },
+  {
+    "name": "YouTube",
+    "url": "https://www.youtube.com/channel/UCbPxks2nLLqz1KmM8YExUNg?cbrd=1",
+    "icon": "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/youtube.svg",
+    "username": "@liforra",
+    "status": "active",
+    "color": "#FF0000",
+    "description": ""
+  },
+  {
+    "name": "YouTube",
+    "url": "https://www.youtube.com/channel/UCndiDAeJTXJPKlayOJsvbbA",
+    "icon": "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/youtube.svg",
+    "username": "",
+    "status": "active",
+    "color": "#FF0000",
+    "description": ""
+  },
+  {
+    "name": "GitHub",
+    "url": "https://github.com/Shwoosh-y",
+    "icon": "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/github.svg",
+    "username": "Shwoosh-y",
+    "status": "active",
+    "color": "#24292E",
+    "description": ""
+  },
+  {
+    "name": "GitHub",
+    "url": "https://github.com/liforra",
+    "icon": "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/github.svg",
+    "username": "liforra",
+    "status": "active",
+    "color": "#24292E",
+    "description": ""
+  },
+  {
+    "name": "Steam",
+    "url": "https://steamcommunity.com/id/liforra/",
+    "icon": "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/steam.svg",
+    "username": "liforra",
+    "status": "active",
+    "color": "#171A21",
+    "description": ""
+  },
+  {
+    "name": "Instagram",
+    "url": "https://www.instagram.com/liforra/",
+    "icon": "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/instagram.svg",
+    "username": "@liforra",
+    "status": "active",
+    "color": "#E1306C",
+    "description": ""
+  },
+  {
+    "name": "Ko-fi",
+    "url": "https://ko-fi.com/liforra",
+    "icon": "/assets/icons/kofi.svg",
+    "username": "@liforra",
+    "status": "active",
+    "color": "#13C3FF",
+    "description": ""
+  },
+  {
+    "name": "Monkeytype",
+    "url": "https://monkeytype.com/profile/Liforra",
+    "icon": "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/monkeytype.svg",
+    "username": "Liforra",
+    "status": "active",
+    "color": "#e2b714",
+    "description": ""
+  },
+  {
+    "name": "Twitch",
+    "url": "https://www.twitch.tv/shwooshy2",
+    "icon": "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/twitch.svg",
+    "username": "shwooshy2",
+    "status": "active",
+    "color": "#9146FF",
+    "description": ""
+  },
+  {
+    "name": "Twitch",
+    "url": "https://www.twitch.tv/liforra",
+    "icon": "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/twitch.svg",
+    "username": "liforra",
+    "status": "active",
+    "color": "#9146FF",
+    "description": ""
+  }
+]

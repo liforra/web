@@ -181,3 +181,46 @@ body {
   color: #ff0101;
   font-size: 0.1rem !important;
 }
+
+.socials-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.social-card {
+  padding: 1rem;
+}
+
+.social-card a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+.social-card .icon {
+  width: 3rem;
+  height: 3rem;
+  object-fit: contain;
+  margin-bottom: 0.5rem;
+}
+
+.social-card .name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 0.25rem 0;
+}
+
+.social-card .username {
+  font-size: 1rem;
+  color: #d8a0f0;
+}
+
+.social-card.inactive {
+  background-color: #444;
+  color: #888;
+  text-decoration: line-through;
+}
