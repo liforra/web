@@ -222,5 +222,20 @@ body {
 .social-card.inactive {
   background-color: #444;
   color: #888;
-  text-decoration: line-through;
+  text-decoration: none;
 }
+
+.socials-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1.2rem}
+.snes-button.social-card{display:flex;align-items:center;justify-content:flex-start;padding:.6rem;position:relative;background-color:var(--social-accent,#4fd1c5)!important;color:#fff;box-shadow:none}
+.snes-button.social-card:hover{transform:translateY(-2px);filter:brightness(1.06)}
+.social-content{display:flex;flex-direction:row;align-items:center;gap:.6rem;width:100%}
+.social-content .icon{width:22px;height:22px;object-fit:contain;image-rendering:pixelated;filter:brightness(0) invert(1);opacity:.92}
+.social-content .text{display:flex;flex-direction:column;min-width:0;gap:2px}
+.social-content .name{font-size:1.1rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff;line-height:1.25;margin:1px 0}
+.social-content .username{font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:rgba(255,255,255,.92);line-height:1.25;margin:1px 0}
+.social-content .desc{font-size:.85rem;color:rgba(255,255,255,.88);line-height:1.25;margin:1px 0}
+.social-content .desc:empty{display:none}
+.snes-button.social-card.inactive{opacity:.55;filter:saturate(60%)}
+.snes-button.social-card.inactive .name,.snes-button.social-card.inactive .username{color:rgba(255,140,140,.92)}
+.snes-button.social-card.inactive .desc{color:#ff0000}
+.snes-button.social-card.inactive .icon{filter:brightness(0) invert(1) sepia(.3) hue-rotate(-8deg) saturate(220%);opacity:.9}
