@@ -13,6 +13,19 @@ const cookieParser = require("cookie-parser");
 const fetch = require('node-fetch');
 const crypto = require('crypto');
 
+function ensureStylesCss() {
+  try {
+    const snesPath = path.resolve(__dirname, 'node_modules', 'snes.css', 'dist', 'snes.css');
+    const prePath = path.resolve(__dirname, 'pretail-styles.css');
+    const outPath = path.resolve(__dirname, 'public', 'styles.css');
+    const base = fs.readFileSync(snesPath, 'utf8');
+    let pre = fs.readFileSync(prePath, 'utf8');
+    pre = pre.replace(/@import[^;]*;?/i, '');
+    fs.writeFileSync(outPath, base + "\n" + pre);
+  } catch {}
+}
+ensureStylesCss();
+
 
 // Cache for storing invite data with expiration
 const inviteCache = new Map();
