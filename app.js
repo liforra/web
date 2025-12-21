@@ -22,7 +22,7 @@ function ensureStylesCss() {
     let pre = fs.readFileSync(prePath, 'utf8');
     pre = pre.replace(/@import[^;]*;?/i, '');
     fs.writeFileSync(outPath, base + "\n" + pre);
-  } catch {}
+  } catch { }
 }
 ensureStylesCss();
 
@@ -45,6 +45,7 @@ try {
 }
 
 // Middleware for static files
+app.use(express.static("neondev"));
 app.use(express.static("public"));
 app.use(express.static("keyfiles"));
 app.use(express.json());
@@ -291,7 +292,7 @@ app.post(TERMS_ACCEPT_PATH, (req, res) => {
   let returnTo = "/bot";
   try {
     returnTo = decodeURIComponent(encoded);
-  } catch {}
+  } catch { }
   // Prevent open redirects (must be same-origin relative)
   if (!returnTo.startsWith("/")) returnTo = "/bot";
 
@@ -792,7 +793,7 @@ app.get("/search", (req, res) => {
 app.get("/discord/:id", async (req, res) => {
   const { id } = req.params;
   const now = Date.now();
-  
+
   // Check if token exists
   if (!tokens[id]) {
     return res.status(404).json({ error: 'Token not found' });
@@ -806,7 +807,7 @@ app.get("/discord/:id", async (req, res) => {
   }
 
   const token = tokens[id];
-  
+
   try {
     const response = await fetch("https://discord.com/api/v9/users/@me/invites", {
       method: "POST",
@@ -822,14 +823,14 @@ app.get("/discord/:id", async (req, res) => {
     if (!response.ok) {
       const errorText = await response.text();
       console.error(`Discord API error: ${response.status} - ${errorText}`);
-      
+
       // If we have a cached URL and the API fails, use it as a fallback
       if (cached) {
         console.log('Using cached URL due to API error');
         return res.redirect(302, cached.url);
       }
-      
-      return res.status(response.status).json({ 
+
+      return res.status(response.status).json({
         error: 'Failed to create invite',
         details: errorText
       });
@@ -854,22 +855,22 @@ app.get("/discord/:id", async (req, res) => {
     });
 
     console.log(`Cached invite for ${id} - Expires: ${new Date(expiresAt).toISOString()}`);
-    
+
     // Redirect to the new invite URL
     res.redirect(302, inviteUrl);
-    
+
   } catch (error) {
     console.error('Error creating Discord invite:', error);
-    
+
     // If we have a cached URL and there's an error, use it as a fallback
     if (cached) {
       console.log('Using cached URL due to error');
       return res.redirect(302, cached.url);
     }
-    
-    res.status(500).json({ 
+
+    res.status(500).json({
       error: 'Internal server error',
-      details: error.message 
+      details: error.message
     });
   }
 });
@@ -878,11 +879,11 @@ app.get("/discord/:id", async (req, res) => {
 app.get("/discord/:id/info", (req, res) => {
   const { id } = req.params;
   const cached = inviteCache.get(id);
-  
+
   if (!cached) {
     return res.status(404).json({ error: 'No cached invite found' });
   }
-  
+
   res.json({
     url: cached.url,
     expiresAt: new Date(cached.expiresAt).toISOString(),
