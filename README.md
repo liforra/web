@@ -1,3 +1,5 @@
-Hey, I'm Liforra, a 19-year-old programmer and tech enthusiast. You can find my personal website at [liforra.de](https://liforra.de), also reachable via I2P at http://q3hpmogpmbv25pdvrceqr3ku454el4xam3u2iugooywfdsb5khea.b32.i2p/ and Tor at http://ekbyky7ey2d7arb7q6uctyaf4vhb72zlcpsdokmscsdpe6vvwcrrtkid.onion/. This site is my online hub where I showcase my projects, share my creations, and maintain transparency about my work.
+Hey, I'm Liforra, a 19-year-old programmer and tech enthusiast. You can view it on the [Clearweb](https://liforra.de), [I2P](http://q3hpmogpmbv25pdvrceqr3ku454el4xam3u2iugooywfdsb5khea.b32.i2p/), or [Tor](http://ekbyky7ey2d7arb7q6uctyaf4vhb72zlcpsdokmscsdpe6vvwcrrtkid.onion/). This site is my online hub where I showcase my projects, share my creations, and maintain transparency about my work.
+
+Main Repository on [Codeberg](https://codeberg.org/liforra/web), read-only Mirror on [Github](https://github.com/liforra/web)
 
 The site has a simple, SNES-inspired aesthetic—think colorful, pixel‑friendly vibes—and serves as a portfolio for my programming projects, a collection of my banners and keys. I use it to connect with others who share my interests, host tools I’ve built, and keep an open record of how I operate online. Feel free to explore the Projects, Me, Keys, Banners, and Socials sections to learn more about what I do.
